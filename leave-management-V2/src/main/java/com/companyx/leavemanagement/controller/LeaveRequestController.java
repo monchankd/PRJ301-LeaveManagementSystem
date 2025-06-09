@@ -1,16 +1,16 @@
 package com.companyx.leavemanagement.controller;
 
 import com.companyx.leavemanagement.entity.LeaveRequest;
+import com.companyx.leavemanagement.entity.LeaveStatus; // Thêm dòng này
 import com.companyx.leavemanagement.repository.LeaveRequestRepository;
-
-import main.java.com.companyx.leavemanagement.entity.LeaveStatus;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class LeaveRequestController {
@@ -26,7 +26,7 @@ public class LeaveRequestController {
 
     @PostMapping("/leave/create")
     public String createLeaveRequest(LeaveRequest leaveRequest, Authentication authentication) {
-        // Gán người dùng và trạng thái mặc định (Inprogress)
+        // Gán trạng thái mặc định (Inprogress)
         leaveRequest.setStatus(new LeaveStatus(1, "Inprogress"));
         leaveRequestRepository.save(leaveRequest);
         return "redirect:/leave/list";
@@ -34,8 +34,6 @@ public class LeaveRequestController {
 
     @GetMapping("/leave/list")
     public String listLeaveRequests(Model model, Authentication authentication) {
-        // Lấy danh sách đơn dựa trên người dùng hiện tại
-        // Giả sử lấy tất cả đơn cho đơn giản
         model.addAttribute("leaveRequests", leaveRequestRepository.findAll());
         return "leave-list";
     }
@@ -48,8 +46,7 @@ public class LeaveRequestController {
     }
 
     @PostMapping("/leave/review/{id}")
-    public String reviewLeaveRequest(@PathVariable int id, @RequestParam String action,
-            @RequestParam String processReason) {
+    public String reviewLeaveRequest(@PathVariable int id, @RequestParam String action, @RequestParam String processReason) {
         LeaveRequest request = leaveRequestRepository.findById(id).orElseThrow();
         if ("approve".equals(action)) {
             request.setStatus(new LeaveStatus(2, "Approved"));

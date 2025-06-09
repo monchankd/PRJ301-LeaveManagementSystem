@@ -1,13 +1,13 @@
-package com.companyx.leave_management;
+package com.companyx.leavemanagement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class LeaveManagementApplication {
+public class LeaveManagementApplication extends SpringBootServletInitializer {
 
-	public static void main(String[] args) {
-		SpringApplication.run(LeaveManagementApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(LeaveManagementApplication.class, args);
+    }
 }
