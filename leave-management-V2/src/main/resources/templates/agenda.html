@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Agenda</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <style>
+        table { border-collapse: collapse; }
+        td, th { border: 1px solid black; padding: 5px; }
+        .working { background-color: green; }
+        .on-leave { background-color: red; }
+    </style>
+</head>
+<body>
+    <h2>Agenda</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nhân sự</th>
+                <th th:each="day : ${days}" th:text="${day}"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="employee : ${employees}">
+                <td th:text="${employee}"></td>
+                <td th:each="day : ${days}" class="working"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
