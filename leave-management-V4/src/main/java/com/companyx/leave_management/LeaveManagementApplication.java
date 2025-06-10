@@ -2,8 +2,11 @@ package com.companyx.leave_management;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
+@ServletComponentScan
+
 public class LeaveManagementApplication {
 
 	public static void main(String[] args) {
