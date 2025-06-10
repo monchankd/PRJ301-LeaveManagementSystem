@@ -1,17 +1,20 @@
-﻿INSERT INTO Departments (DepartmentName) VALUES ('Phòng IT');
-INSERT INTO Roles (RoleName) VALUES ('EMPLOYEE'), ('MANAGER');
-INSERT INTO Users (Username, Password, FullName, DepartmentId, ManagerId)
+﻿INSERT INTO Departments (DepartmentId, DepartmentName) VALUES (1, N'IT Department');
+INSERT INTO Roles (RoleId, RoleName) VALUES (1, N'EMPLOYEE'), (2, N'MANAGER');
+INSERT INTO Users (UserId, Username, Password, FullName, DepartmentId, ManagerId)
 VALUES 
-    ('teo', '$2a$10$zXJ9qK1zX8J8qX9qK1zX8J8qX9qK1zX8J8qX9qK1zX8J8qX9qK1z', 'Mr Tèo', 1, NULL),
-    ('tit', '$2a$10$zXJ9qK1zX8J8qX9qK1zX8J8qX9qK1zX8J8qX9qK1zX8J8qX9qK1z', 'Mr Tít', 1, NULL),
-    ('employee1', '$2a$10$zXJ9qK1zX8J8qX9qK1zX8J8qX9qK1zX8J8qX9qK1zX8J8qX9qK1z', 'Mr F', 1, 2);
-INSERT INTO UserRoles (UserId, RoleId) 
+    (1, N'teo', N'$2a$10$XURPShQNCsLjp1ESc2laoObo9QZDhz51hM6E9nS.oZ/lLXXWVKLyq', N'Mr Teo', 1, NULL),
+    (2, N'tit', N'$2a$10$XURPShQNCsLjp1ESc2laoObo9QZDhz51hM6E9nS.oZ/lLXXWVKLyq', N'Mr Tit', 1, NULL),
+    (3, N'employee1', N'$2a$10$XURPShQNCsLjp1ESc2laoObo9QZDhz51hM6E9nS.oZ/lLXXWVKLyq', N'Mr F', 1, 2);
+INSERT INTO UserRoles (UserId, RoleId)
 VALUES 
-    (1, 1), -- Tèo là EMPLOYEE
-    (2, 2), -- Tít là MANAGER
-    (3, 1); -- Employee1 là EMPLOYEE
-INSERT INTO LeaveStatus (StatusName) VALUES ('Inprogress'), ('Approved'), ('Rejected');
-INSERT INTO LeaveRequests (UserId, Title, FromDate, ToDate, Reason, StatusId, ProcessedById, ProcessReason)
+    (1, 1), -- Teo is EMPLOYEE
+    (2, 2), -- Tit is MANAGER
+    (3, 1); -- Employee1 is EMPLOYEE
+INSERT INTO LeaveStatus (StatusId, StatusName) VALUES 
+    (1, N'Inprogress'), 
+    (2, N'Approved'), 
+    (3, N'Rejected');
+INSERT INTO LeaveRequests (RequestId, UserId, Title, FromDate, ToDate, Reason, StatusId, ProcessedById, ProcessReason)
 VALUES 
-    (1, 'Xin nghỉ cưới', '2025-01-03', '2025-01-05', 'Lấy vợ', 1, NULL, NULL),
-    (3, 'Xin nghỉ thử', '2025-01-05', '2025-01-05', 'Du lịch', 3, 2, 'Không đủ nhân sự');
+    (1, 1, N'Wedding Leave', '2025-01-03', '2025-01-05', N'Getting married', 1, NULL, NULL),
+    (2, 3, N'Trial Leave', '2025-01-05', '2025-01-05', N'Travel', 3, 2, N'Insufficient staff');
