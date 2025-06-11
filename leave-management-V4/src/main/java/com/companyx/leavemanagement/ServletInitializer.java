@@ -1,4 +1,4 @@
-package com.companyx.leave_management;
+package com.companyx.leavemanagement;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
