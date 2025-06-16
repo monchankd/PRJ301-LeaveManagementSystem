@@ -1,8 +1,3 @@
-<%-- 
-    Document   : dashboard
-    Created on : Jun 13, 2025, 12:29:04 AM
-    Author     : ASUS
---%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="com.companyx.leavemanagement.models.User" %>
@@ -11,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Leave Request History</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -22,32 +17,43 @@
             height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            padding-top: 2rem;
         }
-        .dashboard-card {
+        .history-card {
             background: #fff;
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 600px;
             text-align: center;
         }
-        .dashboard-card h2 {
+        .history-card h2 {
             margin-bottom: 1.5rem;
             color: #4a90e2;
             font-size: 1.75rem;
             font-weight: 700;
         }
-        .dashboard-card p {
-            margin-bottom: 1rem;
-            color: #666;
-            font-size: 1rem;
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
         }
-        .dashboard-card a {
-            display: block;
+        .history-table th, .history-table td {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        .history-table th {
+            background-color: #4a90e2;
+            color: #fff;
+        }
+        .history-card a {
+            display: inline-block;
+            margin-top: 1.5rem;
             padding: 0.75rem 1.5rem;
-            margin: 0.5rem 0;
             background: #4a90e2;
             color: #fff;
             text-decoration: none;
@@ -55,34 +61,40 @@
             font-weight: 500;
             transition: background 0.3s;
         }
-        .dashboard-card a:hover {
+        .history-card a:hover {
             background: #357abd;
-        }
-        .dashboard-card .success {
-            color: #28a745;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard-card">
+    <div class="history-card">
+        <h2>Leave Request History</h2>
         <% 
             com.companyx.leavemanagement.models.User user = (com.companyx.leavemanagement.models.User) session.getAttribute("user");
             if (user == null) {
                 response.sendRedirect("login");
                 return;
             }
-            String success = request.getParameter("success");
-            if ("true".equals(success)) {
         %>
-            <p class="success">Leave request submitted successfully!</p>
-        <% } %>
-        <h2>Welcome, <%= user.getUsername() %>!</h2>
-        <p>Your role is: <%= user.getRole() %></p>
-        <a href="submitLeaveRequest">Submit Leave Request</a>
-        <a href="leaveHistory">View Leave History</a>
-        <a href="logout">Logout</a>
+        <table class="history-table">
+            <tr>
+                <th>Request ID</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Reason</th>
+                <th>Status</th>
+            </tr>
+            <c:forEach var="request" items="${leaveRequests}">
+                <tr>
+                    <td>${request.requestId}</td>
+                    <td>${request.startDate}</td>
+                    <td>${request.endDate}</td>
+                    <td>${request.reason}</td>
+                    <td>${request.status}</td>
+                </tr>
+            </c:forEach>
+        </table>
+        <a href="dashboard">Back to Dashboard</a>
     </div>
 </body>
 </html>
