@@ -1,0 +1,135 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hệ Thống Quản Lý Nghỉ Phép - Chào Mừng</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #4a90e2, #9013fe);
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+                overflow: hidden;
+            }
+            .container {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                padding: 40px;
+                text-align: center;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                animation: fadeIn 1.5s ease-in-out;
+            }
+            h1 {
+                font-size: 2.5em;
+                margin-bottom: 20px;
+                color: #ffeb3b;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                animation: bounceIn 1s;
+            }
+            p {
+                font-size: 1.2em;
+                margin-bottom: 30px;
+                opacity: 0.9;
+            }
+            .login-btn {
+                padding: 12px 30px;
+                font-size: 1.1em;
+                color: #fff;
+                background: linear-gradient(45deg, #ff4e50, #f9d423);
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                text-decoration: none;
+                transition: transform 0.3s, box-shadow 0.3s;
+            }
+            .login-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 5px 15px rgba(255, 215, 0, 0.6);
+            }
+            .bg-animation {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                overflow: hidden;
+            }
+            .bg-circle {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                animation: float 10s infinite;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            @keyframes bounceIn {
+                0% {
+                    transform: scale(0.5);
+                    opacity: 0;
+                }
+                60% {
+                    transform: scale(1.2);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+            @keyframes float {
+                0% {
+                    transform: translateY(0) translateX(0) scale(1);
+                }
+                50% {
+                    transform: translateY(-20px) translateX(20px) scale(1.2);
+                }
+                100% {
+                    transform: translateY(0) translateX(0) scale(1);
+                }
+            }
+        </style>
+        <script>
+            window.onload = function () {
+                // T?o các vòng tròn ??ng cho hi?u ?ng n?n
+                for (let i = 0; i < 5; i++) {
+                    let circle = document.createElement('div');
+                    circle.className = 'bg-circle';
+                    circle.style.width = Math.random() * 100 + 50 + 'px';
+                    circle.style.height = circle.style.width;
+                    circle.style.left = Math.random() * 100 + '%';
+                    circle.style.top = Math.random() * 100 + '%';
+                    circle.style.animationDelay = Math.random() * 5 + 's';
+                    document.querySelector('.bg-animation').appendChild(circle);
+                }
+            };
+        </script>
+    </head>
+    <body>
+        <div class="bg-animation"></div>
+        <div class="container">
+            <h1>Chào Mừng Đến Hệ Thống Quản Lý Nghỉ Phép</h1>
+            <p>Vui lòng đăng nhập để tiếp tục quản lý yêu cầu nghỉ phép của bạn!</p>
+            <a href="login" class="login-btn">Đăng Nhập Ngay</a>
+        </div>
+    </body>
+</html>
