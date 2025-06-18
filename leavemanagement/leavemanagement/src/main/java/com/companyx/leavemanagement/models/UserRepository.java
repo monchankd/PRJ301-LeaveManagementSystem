@@ -14,4 +14,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.username = :username AND u.passwordHash = :passwordHash")
     User findByUsernameAndPasswordHash(String username, String passwordHash);
+    boolean existsByUsername(String username); // Kiểm tra username đã tồn tại
+    
 }

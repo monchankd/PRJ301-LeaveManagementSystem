@@ -76,6 +76,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             <h1>Leave Management System</h1>
             <p>Please log in to access your account and manage leave requests.</p>
             <a href="login" class="login-btn">Login Now</a>
+            <a href="register">Register</a>
         </div>
     </body>
 </html>

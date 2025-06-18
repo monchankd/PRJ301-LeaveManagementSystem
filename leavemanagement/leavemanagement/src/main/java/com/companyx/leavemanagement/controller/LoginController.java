@@ -128,6 +128,70 @@ public class LoginController {
         return modelAndView;
     }
     
+    
+    @GetMapping("/approveLeave")
+    public ModelAndView showApproveLeave(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.getRole().equals("admin")) {
+            modelAndView.setViewName("redirect:/dashboard");
+            return modelAndView;
+        }
+
+        List<LeaveRequest> leaveRequests = leaveRequestRepository.findAll();
+        modelAndView.addObject("leaveRequests", leaveRequests);
+        modelAndView.setViewName("approveLeave");
+        return modelAndView;
+    }
+
+    @PostMapping("/approveLeave")
+    public ModelAndView processApproveLeave(@RequestParam("requestId") Integer requestId,
+                                           @RequestParam("action") String action,
+                                           HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.getRole().equals("admin")) {
+            modelAndView.setViewName("redirect:/dashboard");
+            return modelAndView;
+        }
+
+        LeaveRequest leaveRequest = leaveRequestRepository.findById(requestId).orElse(null);
+        if (leaveRequest != null) {
+            if ("approve".equals(action)) {
+                leaveRequest.setStatus("Approved");
+            } else if ("reject".equals(action)) {
+                leaveRequest.setStatus("Rejected");
+            }
+            leaveRequestRepository.save(leaveRequest);
+        }
+        modelAndView.setViewName("redirect:/approveLeave");
+        return modelAndView;
+    }
+    
+    @GetMapping("/register")
+    public String showRegisterPage() {
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public ModelAndView register(@RequestParam String username, @RequestParam String password, HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
+        if (userRepository.existsByUsername(username)) {
+            modelAndView.addObject("message", "Username already exists. Please choose another.");
+            modelAndView.setViewName("register");
+            return modelAndView;
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPasswordHash(password); // Nên mã hóa password
+        user.setRole("user"); // Đặt mặc định là "user"
+        userRepository.save(user);
+
+        modelAndView.addObject("message", "Registration successful! Please log in. Your role will be assigned by admin.");
+        modelAndView.setViewName("login");
+        return modelAndView;
+    }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {

@@ -82,6 +82,9 @@
         <p>Your role is: <%= user.getRole() %></p>
         <a href="submitLeaveRequest">Submit Leave Request</a>
         <a href="leaveHistory">View Leave History</a>
+        <% if ("admin".equals(user.getRole())) { %>
+            <a href="approveLeave">Approve Leave Requests</a>
+        <% } %>
         <a href="logout">Logout</a>
     </div>
 </body>

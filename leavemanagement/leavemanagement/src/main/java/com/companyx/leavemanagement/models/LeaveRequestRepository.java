@@ -13,4 +13,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Integer> {
     List<LeaveRequest> findByUser_UserId(Integer userId); // Tìm theo userId
+    @Override
+    List<LeaveRequest> findAll(); // Thêm để lấy tất cả yêu cầu
 }
