@@ -15,6 +15,7 @@ import com.companyx.leavemanagement.models.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -89,6 +90,7 @@ public class LoginController {
 
         LeaveRequest leaveRequest = new LeaveRequest();
         leaveRequest.setUser(user);
+        leaveRequest.setCreatedBy(user.getUserId()); // Đảm bảo gán giá trị ngay từ đầu
 
         try {
             leaveRequest.setStartDate(LocalDate.parse(startDate));
@@ -106,13 +108,15 @@ public class LoginController {
             return modelAndView;
         } catch (DateTimeParseException e) {
             modelAndView.addObject("message", "Invalid date format. Please use YYYY-MM-DD.");
+            modelAndView.setViewName("leaveRequest");
         } catch (Exception e) {
             modelAndView.addObject("message", "An error occurred while submitting the request. Please try again.");
+            modelAndView.setViewName("leaveRequest"); // Giữ lại trang hiện tại nếu có lỗi
+
         }
-        modelAndView.setViewName("leaveRequest"); // Giữ lại trang hiện tại nếu có lỗi
         return modelAndView;
     }
-    
+
     @GetMapping("/leaveHistory")
     public ModelAndView showLeaveHistory(HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
@@ -122,23 +126,62 @@ public class LoginController {
             return modelAndView;
         }
 
-        List<LeaveRequest> leaveRequests = leaveRequestRepository.findByUser_UserId(user.getUserId());
-        modelAndView.addObject("leaveRequests", leaveRequests);
+        List<LeaveRequest> personalRequests = new ArrayList<>();
+        List<LeaveRequest> subordinateRequests = new ArrayList<>();
+
+        // Lấy lịch sử bản thân
+        personalRequests.addAll(leaveRequestRepository.findByUser_UserId(user.getUserId()));
+
+        // Kiểm tra vai trò và mở rộng lịch sử cấp dưới, loại bỏ bản thân
+        if ("Division Leader".equals(user.getRole())) {
+            List<User> divisionUsers = userRepository.findAll();
+            for (User u : divisionUsers) {
+                if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !(u.getUserId()==user.getUserId())) {
+                    subordinateRequests.addAll(leaveRequestRepository.findByUser_UserId(u.getUserId()));
+                }
+            }
+        } else {
+            List<User> subordinates = userRepository.findByManagerId(user.getUserId());
+            for (User subordinate : subordinates) {
+                subordinateRequests.addAll(leaveRequestRepository.findByUser_UserId(subordinate.getUserId()));
+            }
+        }
+
+        modelAndView.addObject("personalRequests", personalRequests);
+        modelAndView.addObject("subordinateRequests", subordinateRequests);
         modelAndView.setViewName("leaveHistory");
         return modelAndView;
     }
-    
-    
+
     @GetMapping("/approveLeave")
     public ModelAndView showApproveLeave(HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
         User user = (User) session.getAttribute("user");
-        if (user == null || !user.getRole().equals("admin")) {
+        if (user == null) {
             modelAndView.setViewName("redirect:/dashboard");
             return modelAndView;
         }
 
-        List<LeaveRequest> leaveRequests = leaveRequestRepository.findAll();
+        List<LeaveRequest> leaveRequests = new ArrayList<>();
+        if ("admin".equals(user.getRole())) {
+            leaveRequests = leaveRequestRepository.findAll(); // Admin thấy tất cả
+        } else if ("Division Leader".equals(user.getRole())) {
+            List<User> divisionUsers = userRepository.findAll(); // Lấy tất cả user trong division
+            for (User u : divisionUsers) {
+                if (u.getDivision().equals(user.getDivision())) {
+                    leaveRequests.addAll(leaveRequestRepository.findByUser_UserId(u.getUserId()));
+                }
+            }
+        } else if ("Team Leader".equals(user.getRole())) {
+            List<User> subordinates = userRepository.findByManagerId(user.getUserId());
+            for (User subordinate : subordinates) {
+                leaveRequests.addAll(leaveRequestRepository.findByUser_UserId(subordinate.getUserId()));
+            }
+        } else {
+            modelAndView.setViewName("redirect:/dashboard");
+            return modelAndView;
+        }
+
         modelAndView.addObject("leaveRequests", leaveRequests);
         modelAndView.setViewName("approveLeave");
         return modelAndView;
@@ -146,50 +189,76 @@ public class LoginController {
 
     @PostMapping("/approveLeave")
     public ModelAndView processApproveLeave(@RequestParam("requestId") Integer requestId,
-                                           @RequestParam("action") String action,
-                                           HttpSession session) {
+            @RequestParam("action") String action,
+            HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
         User user = (User) session.getAttribute("user");
-        if (user == null || !user.getRole().equals("admin")) {
+        if (user == null) {
             modelAndView.setViewName("redirect:/dashboard");
             return modelAndView;
         }
 
         LeaveRequest leaveRequest = leaveRequestRepository.findById(requestId).orElse(null);
         if (leaveRequest != null) {
-            if ("approve".equals(action)) {
-                leaveRequest.setStatus("Approved");
-            } else if ("reject".equals(action)) {
-                leaveRequest.setStatus("Rejected");
+            // Kiểm tra quyền phê duyệt
+            boolean hasPermission = "admin".equals(user.getRole());
+            if ("Division Leader".equals(user.getRole()) && leaveRequest.getUser().getDivision().equals(user.getDivision())) {
+                hasPermission = true;
+            } else if ("Team Leader".equals(user.getRole()) && leaveRequest.getUser().getManagerId() != null && leaveRequest.getUser().getManagerId().equals(user.getUserId())) {
+                hasPermission = true;
             }
-            leaveRequestRepository.save(leaveRequest);
+
+            if (hasPermission) {
+                if ("approve".equals(action)) {
+                    leaveRequest.setStatus("Approved");
+                    leaveRequest.setProcessedBy(user.getUserId());
+                } else if ("reject".equals(action)) {
+                    leaveRequest.setStatus("Rejected");
+                    leaveRequest.setProcessedBy(user.getUserId());
+                }
+                leaveRequestRepository.save(leaveRequest);
+            }
         }
         modelAndView.setViewName("redirect:/approveLeave");
         return modelAndView;
     }
-    
+
     @GetMapping("/register")
-    public String showRegisterPage() {
+    public String showRegisterPage(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !"admin".equals(user.getRole())) {
+            return "redirect:/dashboard";
+        }
         return "register";
     }
 
     @PostMapping("/register")
-    public ModelAndView register(@RequestParam String username, @RequestParam String password, HttpSession session) {
+    public ModelAndView register(@RequestParam String username, @RequestParam String password,
+            @RequestParam String division, @RequestParam String role,
+            @RequestParam(required = false) Integer managerId, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
+        User user = (User) session.getAttribute("user");
+        if (user == null || !"admin".equals(user.getRole())) {
+            modelAndView.setViewName("redirect:/dashboard");
+            return modelAndView;
+        }
+
         if (userRepository.existsByUsername(username)) {
             modelAndView.addObject("message", "Username already exists. Please choose another.");
             modelAndView.setViewName("register");
             return modelAndView;
         }
 
-        User user = new User();
-        user.setUsername(username);
-        user.setPasswordHash(password); // Nên mã hóa password
-        user.setRole("user"); // Đặt mặc định là "user"
-        userRepository.save(user);
+        User newUser = new User();
+        newUser.setUsername(username);
+        newUser.setPasswordHash(password);
+        newUser.setRole(role); // Division Leader, Team Leader, Nhân Viên
+        newUser.setDivision(division); // IT, QA, Sale
+        newUser.setManagerId(managerId); // Null nếu là Division Leader
+        userRepository.save(newUser);
 
-        modelAndView.addObject("message", "Registration successful! Please log in. Your role will be assigned by admin.");
-        modelAndView.setViewName("login");
+        modelAndView.addObject("message", "Registration successful! User needs admin approval for role.");
+        modelAndView.setViewName("register");
         return modelAndView;
     }
 

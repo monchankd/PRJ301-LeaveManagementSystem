@@ -14,11 +14,11 @@
             margin: 0;
             padding: 0;
             background-color: #ffffff;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 2rem;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
         }
         .history-card {
             background: #fff;
@@ -26,7 +26,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 600px;
+            max-width: 1200px;
             text-align: center;
         }
         .history-card h2 {
@@ -39,12 +39,14 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
+            overflow-x: auto;
         }
         .history-table th, .history-table td {
             padding: 0.75rem;
             border: 1px solid #ddd;
             text-align: left;
             font-size: 0.95rem;
+            white-space: nowrap;
         }
         .history-table th {
             background-color: #4a90e2;
@@ -76,24 +78,95 @@
                 return;
             }
         %>
-        <table class="history-table">
-            <tr>
-                <th>Request ID</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Reason</th>
-                <th>Status</th>
-            </tr>
-            <c:forEach var="request" items="${leaveRequests}">
+        <!-- Bảng cho lịch sử bản thân -->
+        <h3>Personal History</h3>
+        <div class="history-table-container">
+            <table class="history-table">
                 <tr>
-                    <td>${request.requestId}</td>
-                    <td>${request.startDate}</td>
-                    <td>${request.endDate}</td>
-                    <td>${request.reason}</td>
-                    <td>${request.status}</td>
+                    <th>Request ID</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Created By</th>
+                    <th>Processed By</th>
                 </tr>
-            </c:forEach>
-        </table>
+                <c:forEach var="request" items="${personalRequests}">
+                    <tr>
+                        <td>${request.requestId}</td>
+                        <td>${request.startDate}</td>
+                        <td>${request.endDate}</td>
+                        <td>${request.reason}</td>
+                        <td>${request.status}</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${request.createdBy != null}">
+                                    <c:set var="creator" value="${userRepository.findById(request.createdBy)}"/>
+                                    ${creator.isPresent() ? creator.get().username : 'Unknown (ID: '}${request.createdBy}<c:if test="${!creator.isPresent()}">')</c:if>
+                                </c:when>
+                                <c:otherwise>-</c:otherwise>
+                            </c:choose>
+                        </td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${request.processedBy != null}">
+                                    <c:set var="processor" value="${userRepository.findById(request.processedBy)}"/>
+                                    ${processor.isPresent() ? processor.get().username : 'Unknown (ID: '}${request.processedBy}<c:if test="${!processor.isPresent()}">')</c:if>
+                                </c:when>
+                                <c:otherwise>-</c:otherwise>
+                            </c:choose>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </div>
+
+        <!-- Bảng cho lịch sử cấp dưới -->
+        <c:if test="${not empty subordinateRequests}">
+            <h3>Subordinates' History</h3>
+            <div class="history-table-container">
+                <table class="history-table">
+                    <tr>
+                        <th>Request ID</th>
+                        <th>Username</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Created By</th>
+                        <th>Processed By</th>
+                    </tr>
+                    <c:forEach var="request" items="${subordinateRequests}">
+                        <tr>
+                            <td>${request.requestId}</td>
+                            <td>${request.user.username}</td>
+                            <td>${request.startDate}</td>
+                            <td>${request.endDate}</td>
+                            <td>${request.reason}</td>
+                            <td>${request.status}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${request.createdBy != null}">
+                                        <c:set var="creator" value="${userRepository.findById(request.createdBy)}"/>
+                                        ${creator.isPresent() ? creator.get().username : 'Unknown (ID: '}${request.createdBy}<c:if test="${!creator.isPresent()}">')</c:if>
+                                    </c:when>
+                                    <c:otherwise>-</c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${request.processedBy != null}">
+                                        <c:set var="processor" value="${userRepository.findById(request.processedBy)}"/>
+                                        ${processor.isPresent() ? processor.get().username : 'Unknown (ID: '}${request.processedBy}<c:if test="${!processor.isPresent()}">')</c:if>
+                                    </c:when>
+                                    <c:otherwise>-</c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </div>
+        </c:if>
         <a href="dashboard">Back to Dashboard</a>
     </div>
 </body>

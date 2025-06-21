@@ -23,19 +23,20 @@ public class User {
     @Column(name = "passwordHash")
     private String passwordHash;
     private String role;
-    private String department;
+    @Column(name = "division")
+    private String division;
     private Integer managerId;
 
     // Constructors, getters, setters
     public User() {
     }
 
-    public User(int userId, String username, String passwordHash, String role, String department, Integer managerId) {
+    public User(int userId, String username, String passwordHash, String role, String division, Integer managerId) {
         this.userId = userId;
         this.username = username;
         this.passwordHash = passwordHash;
         this.role = role;
-        this.department = department;
+        this.division = division;
         this.managerId = managerId;
     }
 
@@ -72,12 +73,12 @@ public class User {
         this.role = role;
     }
 
-    public String getDepartment() {
-        return department;
+    public String getDivision() {
+        return division;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setDivision(String division) {
+        this.division = division;
     }
 
     public Integer getManagerId() {
@@ -86,5 +87,9 @@ public class User {
 
     public void setManagerId(Integer managerId) {
         this.managerId = managerId;
+    }
+    
+    public boolean checkPassword(String password) {
+        return this.passwordHash.equals(password); // Nên mã hóa password
     }
 }

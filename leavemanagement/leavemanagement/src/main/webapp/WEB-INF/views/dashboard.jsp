@@ -6,11 +6,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="com.companyx.leavemanagement.models.User" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -82,7 +81,7 @@
         <p>Your role is: <%= user.getRole() %></p>
         <a href="submitLeaveRequest">Submit Leave Request</a>
         <a href="leaveHistory">View Leave History</a>
-        <% if ("admin".equals(user.getRole())) { %>
+        <% if ("admin".equals(user.getRole()) || "Division Leader".equals(user.getRole()) || "Team Leader".equals(user.getRole())) { %>
             <a href="approveLeave">Approve Leave Requests</a>
         <% } %>
         <a href="logout">Logout</a>

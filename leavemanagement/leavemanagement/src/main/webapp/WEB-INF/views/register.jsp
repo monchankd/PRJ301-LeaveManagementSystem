@@ -3,7 +3,6 @@
     Created on : Jun 18, 2025, 4:20:53 PM
     Author     : ASUS
 --%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -46,7 +45,7 @@
             color: #333;
             font-weight: 500;
         }
-        .register-card input {
+        .register-card input, .register-card select {
             width: 100%;
             padding: 0.75rem;
             margin-bottom: 1rem;
@@ -82,12 +81,26 @@
 </head>
 <body>
     <div class="register-card">
-        <h2>Register</h2>
+        <h2>Register New User</h2>
         <form action="register" method="post">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required><br>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required><br>
+            <label for="division">Division:</label>
+            <select id="division" name="division" required>
+                <option value="IT">IT</option>
+                <option value="QA">QA</option>
+                <option value="Sale">Sale</option>
+            </select><br>
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="Division Leader">Division Leader</option>
+                <option value="Team Leader">Team Leader</option>
+                <option value="Nhân Viên">Nhân Viên</option>
+            </select><br>
+            <label for="managerId">Manager ID (optional):</label>
+            <input type="number" id="managerId" name="managerId"><br>
             <input type="submit" value="Register">
         </form>
         <% if (request.getAttribute("message") != null) { %>
@@ -96,7 +109,7 @@
         <% if (request.getParameter("error") != null) { %>
             <p class="error"><%= request.getParameter("error") %></p>
         <% } %>
-        <a href="login">Back to Login</a>
+        <a href="dashboard">Back to Dashboard</a>
     </div>
 </body>
 </html>
