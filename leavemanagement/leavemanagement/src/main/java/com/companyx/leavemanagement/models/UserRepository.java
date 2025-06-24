@@ -17,4 +17,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findByUsernameAndPasswordHash(String username, String passwordHash);
     boolean existsByUsername(String username); // Kiểm tra username đã tồn tại
     List<User> findByManagerId(Integer managerId); // Lấy cấp dưới
+    long countByUserId(Integer userId);
 }

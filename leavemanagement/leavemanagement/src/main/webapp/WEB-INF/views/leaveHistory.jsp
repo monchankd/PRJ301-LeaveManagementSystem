@@ -52,6 +52,18 @@
             background-color: #4a90e2;
             color: #fff;
         }
+        .history-table td.status-Pending {
+            background-color: #ffeb3b; /* Yellow for Pending */
+            color: #333;
+        }
+        .history-table td.status-Approved {
+            background-color: #28a745; /* Green for Approved */
+            color: #fff;
+        }
+        .history-table td.status-Rejected {
+            background-color: #dc3545; /* Red for Rejected */
+            color: #fff;
+        }
         .history-card a {
             display: inline-block;
             margin-top: 1.5rem;
@@ -97,25 +109,9 @@
                         <td>${request.startDate}</td>
                         <td>${request.endDate}</td>
                         <td>${request.reason}</td>
-                        <td>${request.status}</td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${request.createdBy != null}">
-                                    <c:set var="creator" value="${userRepository.findById(request.createdBy)}"/>
-                                    ${creator.isPresent() ? creator.get().username : 'Unknown (ID: '}${request.createdBy}<c:if test="${!creator.isPresent()}">')</c:if>
-                                </c:when>
-                                <c:otherwise>-</c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${request.processedBy != null}">
-                                    <c:set var="processor" value="${userRepository.findById(request.processedBy)}"/>
-                                    ${processor.isPresent() ? processor.get().username : 'Unknown (ID: '}${request.processedBy}<c:if test="${!processor.isPresent()}">')</c:if>
-                                </c:when>
-                                <c:otherwise>-</c:otherwise>
-                            </c:choose>
-                        </td>
+                        <td class="status-${request.status}">${request.status}</td>
+                        <td>${request.createdByFullname}</td>
+                        <td>${request.processedByFullname}</td>
                     </tr>
                 </c:forEach>
             </table>
@@ -143,25 +139,9 @@
                             <td>${request.startDate}</td>
                             <td>${request.endDate}</td>
                             <td>${request.reason}</td>
-                            <td>${request.status}</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${request.createdBy != null}">
-                                        <c:set var="creator" value="${userRepository.findById(request.createdBy)}"/>
-                                        ${creator.isPresent() ? creator.get().username : 'Unknown (ID: '}${request.createdBy}<c:if test="${!creator.isPresent()}">')</c:if>
-                                    </c:when>
-                                    <c:otherwise>-</c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${request.processedBy != null}">
-                                        <c:set var="processor" value="${userRepository.findById(request.processedBy)}"/>
-                                        ${processor.isPresent() ? processor.get().username : 'Unknown (ID: '}${request.processedBy}<c:if test="${!processor.isPresent()}">')</c:if>
-                                    </c:when>
-                                    <c:otherwise>-</c:otherwise>
-                                </c:choose>
-                            </td>
+                            <td class="status-${request.status}">${request.status}</td>
+                            <td>${request.createdByFullname}</td>
+                            <td>${request.processedByFullname}</td>
                         </tr>
                     </c:forEach>
                 </table>

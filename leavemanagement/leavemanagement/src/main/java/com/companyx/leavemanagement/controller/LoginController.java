@@ -136,7 +136,7 @@ public class LoginController {
         if ("Division Leader".equals(user.getRole())) {
             List<User> divisionUsers = userRepository.findAll();
             for (User u : divisionUsers) {
-                if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !(u.getUserId()==user.getUserId())) {
+                if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !(u.getUserId() == user.getUserId())) {
                     subordinateRequests.addAll(leaveRequestRepository.findByUser_UserId(u.getUserId()));
                 }
             }
@@ -147,10 +147,27 @@ public class LoginController {
             }
         }
 
+// Thêm fullname cho createdBy và processedBy
+        for (LeaveRequest request : personalRequests) {
+            request.setCreatedByFullname(getFullname(request.getCreatedBy()));
+            request.setProcessedByFullname(getFullname(request.getProcessedBy()));
+        }
+        for (LeaveRequest request : subordinateRequests) {
+            request.setCreatedByFullname(getFullname(request.getCreatedBy()));
+            request.setProcessedByFullname(getFullname(request.getProcessedBy()));
+        }
+
         modelAndView.addObject("personalRequests", personalRequests);
         modelAndView.addObject("subordinateRequests", subordinateRequests);
         modelAndView.setViewName("leaveHistory");
         return modelAndView;
+    }
+
+    private String getFullname(Integer userId) {
+        if (userId == null) {
+            return "-";
+        }
+        return userRepository.findById(userId).map(User::getFullname).orElse("Unknown");
     }
 
     @GetMapping("/approveLeave")

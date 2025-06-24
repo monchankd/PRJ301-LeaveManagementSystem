@@ -52,6 +52,18 @@
             background-color: #4a90e2;
             color: #fff;
         }
+        .approve-table td.status-Pending {
+            background-color: #ffeb3b; /* Yellow for Pending */
+            color: #333;
+        }
+        .approve-table td.status-Approved {
+            background-color: #28a745; /* Green for Approved */
+            color: #fff;
+        }
+        .approve-table td.status-Rejected {
+            background-color: #dc3545; /* Red for Rejected */
+            color: #fff;
+        }
         .approve-table td form {
             display: inline;
         }
@@ -115,7 +127,7 @@
                         <td>${request.startDate}</td>
                         <td>${request.endDate}</td>
                         <td>${request.reason}</td>
-                        <td>${request.status}</td>
+                        <td class="status-${request.status}">${request.status}</td>
                         <td>
                             <c:if test="${request.status == 'Pending'}">
                                 <form action="approveLeave" method="post">

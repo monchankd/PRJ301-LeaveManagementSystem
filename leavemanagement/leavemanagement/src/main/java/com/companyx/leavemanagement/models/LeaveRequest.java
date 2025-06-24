@@ -4,12 +4,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.PersistenceContext;
 
 import java.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Table(name = "leave_requests")
@@ -42,8 +45,10 @@ public class LeaveRequest {
     @Column(name = "processed_by")
     private Integer processedBy; // user_id của người duyệt (null nếu Pending)
 
-    
+    private String createdByFullname; // Thêm thuộc tính tạm thời
+    private String processedByFullname; // Thêm thuộc tính tạm thời
     // Getters và Setters
+
     public Integer getRequestId() {
         return requestId;
     }
@@ -107,4 +112,25 @@ public class LeaveRequest {
     public void setProcessedBy(Integer processedBy) {
         this.processedBy = processedBy;
     }
+
+    public String getCreatedByFullname() {
+        return createdByFullname;
+    }
+
+    public void setCreatedByFullname(String createdByFullname) {
+        this.createdByFullname = createdByFullname;
+    }
+
+    public String getProcessedByFullname() {
+        return processedByFullname;
+    }
+
+    public void setProcessedByFullname(String processedByFullname) {
+        this.processedByFullname = processedByFullname;
+    }
+    @PersistenceContext
+    private transient EntityManager entityManager;
+
+    @Autowired
+    private transient UserRepository userRepository; // Inject repository (note: use @Transactional if needed)
 }

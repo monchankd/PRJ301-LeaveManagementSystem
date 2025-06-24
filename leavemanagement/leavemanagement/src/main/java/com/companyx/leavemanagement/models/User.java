@@ -26,18 +26,20 @@ public class User {
     @Column(name = "division")
     private String division;
     private Integer managerId;
-
+@Column(name = "fullName")
+    private String fullname; // Thêm trường fullname
     // Constructors, getters, setters
     public User() {
     }
 
-    public User(int userId, String username, String passwordHash, String role, String division, Integer managerId) {
+    public User(int userId, String username, String passwordHash, String role, String division, Integer managerId,String fullname) {
         this.userId = userId;
         this.username = username;
         this.passwordHash = passwordHash;
         this.role = role;
         this.division = division;
         this.managerId = managerId;
+        this.fullname = fullname;
     }
 
     // Getters and setters
@@ -88,7 +90,8 @@ public class User {
     public void setManagerId(Integer managerId) {
         this.managerId = managerId;
     }
-    
+    public String getFullname() { return fullname; }
+    public void setFullname(String fullname) { this.fullname = fullname; }
     public boolean checkPassword(String password) {
         return this.passwordHash.equals(password); // Nên mã hóa password
     }
