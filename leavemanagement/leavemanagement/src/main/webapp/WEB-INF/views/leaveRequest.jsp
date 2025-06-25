@@ -14,6 +14,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Submit Leave Request</title>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
@@ -25,6 +26,67 @@
                 justify-content: center;
                 align-items: center;
             }
+            .sidebar {
+                width: 250px;
+                background-color: #4a90e2;
+                color: #fff;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                transition: all 0.3s;
+                z-index: 100;
+            }
+            .sidebar.collapsed {
+                width: 70px;
+            }
+            .sidebar .toggle-btn {
+                background: none;
+                border: none;
+                color: #fff;
+                font-size: 1.5rem;
+                padding: 10px;
+                cursor: pointer;
+                width: 100%;
+                text-align: center;
+            }
+            .sidebar .nav-menu {
+                list-style: none;
+                padding: 0;
+                margin: 20px 0;
+            }
+            .sidebar .nav-menu li {
+                padding: 15px 20px;
+            }
+            .sidebar .nav-menu li a {
+                color: #fff;
+                text-decoration: none;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+            }
+            .sidebar .nav-menu li a i {
+                margin-right: 10px;
+            }
+            .sidebar .nav-menu li a:hover {
+                background-color: #357abd;
+                border-radius: 5px;
+            }
+            .sidebar.collapsed .nav-menu li a span {
+                display: none;
+            }
+            .sidebar.collapsed .nav-menu li a i {
+                margin-right: 0;
+            }
+            .main-content {
+                margin-left: 250px;
+                padding: 20px;
+                transition: all 0.3s;
+                flex-grow: 1;
+            }
+            .main-content.collapsed {
+                margin-left: 70px;
+            }
             .request-card {
                 background: #fff;
                 padding: 2rem;
@@ -32,7 +94,10 @@
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                 width: 100%;
                 max-width: 400px;
-                text-align: center;
+                text-align: center; /* Center the text */
+                margin-left: auto; /* Center the card horizontally */
+                margin-right: auto; /* Center the card horizontally */
+                position: relative;
             }
             .request-card h2 {
                 margin-bottom: 1.5rem;
@@ -42,7 +107,7 @@
             }
             .request-card label {
                 display: block;
-                text-align: left;
+                text-align: center; /* Center the labels */
                 margin-bottom: 0.5rem;
                 color: #333;
                 font-weight: 500;
@@ -56,6 +121,7 @@
                 border-radius: 5px;
                 box-sizing: border-box;
                 font-size: 1rem;
+                text-align: center; /* Center the input text */
             }
             .request-card input[type="submit"] {
                 width: 100%;
@@ -74,6 +140,7 @@
                 color: #28a745;
                 margin-top: 1rem;
                 font-size: 0.9rem;
+                text-align: center; /* Center the message */
             }
             .request-card .back-btn {
                 position: absolute;
@@ -93,24 +160,52 @@
             .request-card .back-btn:hover {
                 background: #5a6268;
             }
+            @media (max-width: 768px) {
+                .sidebar {
+                    transform: translateX(-250px);
+                }
+                .sidebar.collapsed {
+                    transform: translateX(0);
+                }
+                .main-content {
+                    margin-left: 0;
+                }
+                .main-content.collapsed {
+                    margin-left: 0;
+                }
+            }
         </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const sidebar = document.querySelector('.sidebar');
+                const mainContent = document.querySelector('.main-content');
+                const toggleBtn = document.querySelector('.toggle-btn');
+
+                toggleBtn.addEventListener('click', function () {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('collapsed');
+                });
+            });
+        </script>
     </head>
     <body>
-        <div class="request-card">
-            <h2>Submit Leave Request</h2>
-            <form action="submitLeaveRequest" method="post">
-                <label for="startDate">Start Date:</label>
-                <input type="date" id="startDate" name="startDate" required><br>
-                <label for="endDate">End Date:</label>
-                <input type="date" id="endDate" name="endDate" required><br>
-                <label for="reason">Reason:</label>
-                <textarea id="reason" name="reason" rows="4" required></textarea><br>
-                <input type="submit" value="Submit Request">
-            </form>
-            <% if (request.getAttribute("message") != null) { %>
-            <p class="message"><%= request.getAttribute("message") %></p>
-            <% } %>
-            <a href="dashboard" class="back-btn">Back</a>
+        <jsp:include page="/WEB-INF/jsp/sidebar.jsp" />
+        <div class="main-content">
+            <div class="request-card">
+                <h2>Submit Leave Request</h2>
+                <form action="submitLeaveRequest" method="post">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" required><br>
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" required><br>
+                    <label for="reason">Reason:</label>
+                    <textarea id="reason" name="reason" rows="4" required></textarea><br>
+                    <input type="submit" value="Submit Request">
+                </form>
+                <% if (request.getAttribute("message") != null) { %>
+                <p class="message"><%= request.getAttribute("message") %></p>
+                <% } %>
+            </div>
         </div>
     </body>
 </html>
