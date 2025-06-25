@@ -136,7 +136,7 @@ public class LoginController {
         if ("Division Leader".equals(user.getRole())) {
             List<User> divisionUsers = userRepository.findAll();
             for (User u : divisionUsers) {
-                if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !(u.getUserId() == user.getUserId())) {
+                if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !(u.getUserId() == user.getUserId()) && !"admin".equals(u.getRole())) {
                     subordinateRequests.addAll(leaveRequestRepository.findByUser_UserId(u.getUserId()));
                 }
             }
@@ -181,11 +181,11 @@ public class LoginController {
 
         List<LeaveRequest> leaveRequests = new ArrayList<>();
         if ("admin".equals(user.getRole())) {
-            leaveRequests = leaveRequestRepository.findAll(); // Admin thấy tất cả
+            leaveRequests = leaveRequestRepository.findAll(); // Admin sees all
         } else if ("Division Leader".equals(user.getRole())) {
-            List<User> divisionUsers = userRepository.findAll(); // Lấy tất cả user trong division
+            List<User> divisionUsers = userRepository.findAll(); // Get all users in division
             for (User u : divisionUsers) {
-                if (u.getDivision().equals(user.getDivision())) {
+                if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !"admin".equals(u.getRole())) {
                     leaveRequests.addAll(leaveRequestRepository.findByUser_UserId(u.getUserId()));
                 }
             }
@@ -219,9 +219,11 @@ public class LoginController {
         if (leaveRequest != null) {
             // Kiểm tra quyền phê duyệt
             boolean hasPermission = "admin".equals(user.getRole());
-            if ("Division Leader".equals(user.getRole()) && leaveRequest.getUser().getDivision().equals(user.getDivision())) {
+            if ("Division Leader".equals(user.getRole()) && leaveRequest.getUser().getDivision() != null
+                    && leaveRequest.getUser().getDivision().equals(user.getDivision()) && !"admin".equals(leaveRequest.getUser().getRole())) {
                 hasPermission = true;
-            } else if ("Team Leader".equals(user.getRole()) && leaveRequest.getUser().getManagerId() != null && leaveRequest.getUser().getManagerId().equals(user.getUserId())) {
+            } else if ("Team Leader".equals(user.getRole()) && leaveRequest.getUser().getManagerId() != null
+                    && leaveRequest.getUser().getManagerId().equals(user.getUserId())) {
                 hasPermission = true;
             }
 
