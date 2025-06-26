@@ -57,13 +57,27 @@ public class LoginController {
         return modelAndView;
     }
 
-    @GetMapping("/dashboard")
-    public String showDashboard(HttpSession session) {
+@GetMapping("/dashboard")
+    public ModelAndView showDashboard(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/login";
+            modelAndView.setViewName("redirect:/login");
+            return modelAndView;
         }
-        return "dashboard";
+
+        // Add user to model for display in JSP
+        modelAndView.addObject("user", user);
+
+        // Populate user list based on role
+        if ("admin".equals(user.getRole())) {
+            modelAndView.addObject("allUsers", userRepository.findAll());
+        } else {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+        }
+
+        modelAndView.setViewName("dashboard");
+        return modelAndView;
     }
 
     @GetMapping("/submitLeaveRequest")
