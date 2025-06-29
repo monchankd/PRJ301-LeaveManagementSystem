@@ -262,22 +262,26 @@
                     <c:choose>
                         <c:when test="${user.role == 'admin'}">
                             <c:forEach var="u" items="${allUsers}">
-                                <tr>
-                                    <td>${u.userId}</td>
-                                    <td>${u.fullname}</td>
-                                    <td>${u.role}</td>
-                                    <td>${u.division}</td>
-                                </tr>
+                                <c:if test="${u.role != 'admin'}">
+                                    <tr>
+                                        <td>${u.userId}</td>
+                                        <td>${u.fullname}</td>
+                                        <td>${u.role}</td>
+                                        <td>${u.division}</td>
+                                    </tr>
+                                </c:if>
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach var="u" items="${sameDivisionUsers}">
-                                <tr>
-                                    <td>${u.userId}</td>
-                                    <td>${u.fullname}</td>
-                                    <td>${u.role}</td>
-                                    <td>${u.division}</td>
-                                </tr>
+                                <c:if test="${u.role != 'admin'}">
+                                    <tr>
+                                        <td>${u.userId}</td>
+                                        <td>${u.fullname}</td>
+                                        <td>${u.role}</td>
+                                        <td>${u.division}</td>
+                                    </tr>
+                                </c:if>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>

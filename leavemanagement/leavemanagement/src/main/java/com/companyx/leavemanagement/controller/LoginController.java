@@ -72,7 +72,7 @@ public class LoginController {
         // Populate user list based on role
         if ("admin".equals(user.getRole())) {
             modelAndView.addObject("allUsers", userRepository.findAll());
-        } else {
+        } else if(!"admin".equals(user.getRole())) {
             modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
         }
 
