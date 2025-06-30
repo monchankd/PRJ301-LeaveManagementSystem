@@ -16,25 +16,37 @@
             padding: 0;
             height: 100%;
             overflow-x: hidden;
+            background: linear-gradient(135deg, #4a90e2, #50e3c2);
+            animation: gradientFlow 10s ease infinite;
+        }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f4f6f9;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            color: #333;
         }
         .sidebar {
             width: 250px;
-            background-color: #4a90e2;
+            background: linear-gradient(180deg, #4a90e2, #357abd);
             color: #fff;
             height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             z-index: 100;
-            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            animation: sidebarFade 1s ease-in-out;
+        }
+        @keyframes sidebarFade {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
         .sidebar.collapsed {
             width: 70px;
@@ -48,6 +60,10 @@
             cursor: pointer;
             width: 100%;
             text-align: center;
+            transition: color 0.3s;
+        }
+        .sidebar .toggle-btn:hover {
+            color: #50e3c2;
         }
         .sidebar .nav-menu {
             list-style: none;
@@ -56,6 +72,7 @@
         }
         .sidebar .nav-menu li {
             padding: 15px 20px;
+            transition: background 0.3s;
         }
         .sidebar .nav-menu li a {
             color: #fff;
@@ -63,13 +80,13 @@
             font-size: 1rem;
             display: flex;
             align-items: center;
+            transition: color 0.3s;
         }
         .sidebar .nav-menu li a i {
             margin-right: 10px;
         }
         .sidebar .nav-menu li a:hover {
-            background-color: #357abd;
-            border-radius: 5px;
+            color: #50e3c2;
         }
         .sidebar.collapsed .nav-menu li a span {
             display: none;
@@ -79,45 +96,60 @@
         }
         .main-content {
             margin-left: 250px;
-            padding: 20px;
-            transition: all 0.3s;
+            padding: 30px;
+            transition: all 0.3s ease;
             flex-grow: 1;
             overflow-x: hidden;
             box-sizing: border-box;
+            position: relative;
         }
         .main-content.collapsed {
             margin-left: 70px;
         }
         .user-card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
             box-sizing: border-box;
         }
         .personal-info {
             margin-bottom: 2rem;
+            text-align: left;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            animation: slideIn 1s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
         .personal-info h2 {
             margin-bottom: 1rem;
             color: #4a90e2;
-            font-size: 1.75rem;
+            font-size: 2rem;
             font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .personal-info .details {
             max-height: 0;
             overflow: hidden;
             padding: 0 1rem;
-            background: #f9f9f9;
-            border-radius: 5px;
             transition: max-height 0.3s ease-out, padding 0.3s ease-out;
         }
         .personal-info.active .details {
-            max-height: 500px; /* Sufficient height to accommodate content */
+            max-height: 500px;
             padding: 1rem;
         }
         .personal-info p {
@@ -143,17 +175,22 @@
             color: #28a745;
         }
         .personal-info .toggle-btn {
-            background: #4a90e2;
+            background: linear-gradient(45deg, #4a90e2, #9013fe);
             color: #fff;
             border: none;
             padding: 0.5rem 1rem;
-            border-radius: 5px;
+            border-radius: 20px;
             cursor: pointer;
-            transition: background 0.3s;
-            font-size: 0.9rem;
-            font-weight: 500;
+            transition: transform 0.3s, background 0.3s;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         .personal-info .toggle-btn:hover {
+            transform: scale(1.05);
             background: #357abd;
         }
         .user-table {
@@ -162,20 +199,27 @@
             margin-top: 2rem;
             overflow-x: auto;
             table-layout: fixed;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
         }
         .user-table th, .user-table td {
             padding: 0.75rem;
             border: 1px solid #ddd;
             text-align: left;
-            font-size: 0.95rem;
+            font-size: 1rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             box-sizing: border-box;
+            transition: background 0.3s;
         }
         .user-table th {
-            background-color: #4a90e2;
+            background: linear-gradient(90deg, #4a90e2, #357abd);
             color: #fff;
+        }
+        .user-table tr:hover td {
+            background: #f0f8ff;
         }
         .user-table tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -189,13 +233,14 @@
             }
             .main-content {
                 margin-left: 0;
+                padding: 15px;
             }
             .main-content.collapsed {
                 margin-left: 0;
             }
             .user-table {
                 width: 100vw;
-                margin-left: -20px;
+                margin-left: -15px;
             }
         }
     </style>
@@ -207,10 +252,12 @@
             const personalToggle = document.querySelector('.personal-info .toggle-btn');
             const details = document.querySelector('.personal-info .details');
 
-            toggleBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                mainContent.classList.toggle('collapsed');
-            });
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('collapsed');
+                });
+            }
 
             personalToggle.addEventListener('click', function() {
                 const personalInfo = document.querySelector('.personal-info');

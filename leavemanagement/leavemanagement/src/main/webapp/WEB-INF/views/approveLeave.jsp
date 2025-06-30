@@ -14,26 +14,50 @@
                 margin: 0;
                 padding: 0;
                 height: 100%;
-                overflow-x: hidden; /* Prevent horizontal overflow at root level */
+                overflow-x: hidden;
+                background: linear-gradient(135deg, #4a90e2, #50e3c2);
+                animation: gradientFlow 10s ease infinite;
+            }
+            @keyframes gradientFlow {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
             }
             body {
                 font-family: 'Roboto', sans-serif;
-                background-color: #f4f6f9;
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
+                color: #333;
             }
             .sidebar {
                 width: 250px;
-                background-color: #4a90e2;
+                background: linear-gradient(180deg, #4a90e2, #357abd);
                 color: #fff;
                 height: 100vh;
                 position: fixed;
                 top: 0;
                 left: 0;
-                transition: all 0.3s;
+                transition: all 0.3s ease;
                 z-index: 100;
-                overflow-y: auto; /* Allow vertical scrolling if content overflows */
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+                animation: sidebarFade 1s ease-in-out;
+            }
+            @keyframes sidebarFade {
+                from {
+                    opacity: 0;
+                    transform: translateX(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
             }
             .sidebar.collapsed {
                 width: 70px;
@@ -47,6 +71,10 @@
                 cursor: pointer;
                 width: 100%;
                 text-align: center;
+                transition: color 0.3s;
+            }
+            .sidebar .toggle-btn:hover {
+                color: #50e3c2;
             }
             .sidebar .nav-menu {
                 list-style: none;
@@ -55,6 +83,7 @@
             }
             .sidebar .nav-menu li {
                 padding: 15px 20px;
+                transition: background 0.3s;
             }
             .sidebar .nav-menu li a {
                 color: #fff;
@@ -62,13 +91,13 @@
                 font-size: 1rem;
                 display: flex;
                 align-items: center;
+                transition: color 0.3s;
             }
             .sidebar .nav-menu li a i {
                 margin-right: 10px;
             }
             .sidebar .nav-menu li a:hover {
-                background-color: #357abd;
-                border-radius: 5px;
+                color: #50e3c2;
             }
             .sidebar.collapsed .nav-menu li a span {
                 display: none;
@@ -78,97 +107,216 @@
             }
             .main-content {
                 margin-left: 250px;
-                padding: 20px;
-                transition: all 0.3s;
+                padding: 30px;
+                transition: all 0.3s ease;
                 flex-grow: 1;
-                overflow-x: hidden; /* Prevent horizontal overflow in main content */
-                box-sizing: border-box; /* Include padding in width calculation */
+                overflow-x: hidden;
+                box-sizing: border-box;
+                position: relative;
             }
             .main-content.collapsed {
                 margin-left: 70px;
             }
             .approve-card {
-                background: #fff;
-                padding: 2rem;
-                border-radius: 10px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                width: 100%; /* Stretch to full width of main-content */
-                max-width: none; /* Remove max-width constraint */
+                background: rgba(255, 255, 255, 0.9);
+                padding: 2.5rem;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                max-width: none;
                 text-align: center;
-                box-sizing: border-box; /* Include padding in width */
             }
             .approve-card h2 {
                 margin-bottom: 1.5rem;
                 color: #4a90e2;
-                font-size: 1.75rem;
+                font-size: 2rem;
                 font-weight: 700;
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+                animation: fadeIn 1s ease-in;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
             }
             .approve-table {
-                width: 100%; /* Ensure table takes full width of approve-card */
+                width: 100%;
                 border-collapse: collapse;
                 margin-top: 1rem;
-                overflow-x: auto; /* Allow horizontal scroll within table if needed */
-                table-layout: fixed; /* Distribute columns evenly */
+                overflow-x: auto;
+                table-layout: fixed;
+                background: #fff;
+                border-radius: 10px;
+                overflow: hidden;
             }
             .approve-table th, .approve-table td {
                 padding: 0.75rem;
                 border: 1px solid #ddd;
                 text-align: left;
-                font-size: 0.95rem;
+                font-size: 1rem;
                 white-space: nowrap;
-                overflow: hidden; /* Prevent text overflow */
-                text-overflow: ellipsis; /* Add ellipsis for long text */
-                box-sizing: border-box; /* Include padding in cell width */
+                overflow: hidden;
+                text-overflow: ellipsis;
+                box-sizing: border-box;
+                transition: background 0.3s;
             }
             .approve-table th {
-                background-color: #4a90e2;
+                background: linear-gradient(90deg, #4a90e2, #357abd);
                 color: #fff;
-                width: auto; /* Allow dynamic width based on content */
+                width: auto;
+            }
+            .approve-table tr:hover td {
+                background: #f0f8ff;
             }
             .approve-table td.status-Pending {
-                background-color: #ffeb3b; /* Yellow for Pending */
+                background: #ffeb3b;
                 color: #333;
+                font-weight: 500;
             }
             .approve-table td.status-Approved {
-                background-color: #28a745; /* Green for Approved */
+                background: #28a745;
                 color: #fff;
+                font-weight: 500;
             }
             .approve-table td.status-Rejected {
-                background-color: #dc3545; /* Red for Rejected */
+                background: #dc3545;
                 color: #fff;
+                font-weight: 500;
             }
             .approve-table td form {
                 display: inline;
             }
             .approve-table input[type="submit"] {
-                padding: 0.25rem 0.5rem;
+                padding: 0.3rem 0.7rem;
                 margin: 0 0.25rem;
-                background: #28a745;
+                background: linear-gradient(45deg, #28a745, #218838);
                 color: #fff;
                 border: none;
-                border-radius: 3px;
+                border-radius: 20px;
                 cursor: pointer;
-                transition: background 0.3s;
-                font-size: 0.85rem; /* Slightly smaller for better fit */
+                transition: transform 0.3s, background 0.3s;
+                animation: pulse 2s infinite;
             }
             .approve-table input[type="submit"].reject {
-                background: #dc3545;
+                background: linear-gradient(45deg, #dc3545, #c82333);
             }
             .approve-table input[type="submit"]:hover {
-                opacity: 0.9;
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.5);
+            }
+            .details-btn {
+                background: linear-gradient(45deg, #4a90e2, #9013fe);
+                color: #fff;
+                border: none;
+                padding: 0.3rem 0.7rem;
+                border-radius: 20px;
+                cursor: pointer;
+                transition: transform 0.3s, box-shadow 0.3s;
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+            .details-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+            .modal-content {
+                background: #fff;
+                padding: 2rem;
+                border-radius: 15px;
+                width: 90%;
+                max-width: 550px;
+                text-align: left;
+                animation: slideDown 0.5s ease-out;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            }
+            @keyframes slideDown {
+                from {
+                    transform: translateY(-50px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            .modal-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+            }
+            .modal-table th, .modal-table td {
+                padding: 0.6rem;
+                border: 1px solid #eee;
+                text-align: left;
+                font-size: 1rem;
+            }
+            .modal-table th {
+                background: #f9f9f9;
+                color: #4a90e2;
+            }
+            .close-btn {
+                background: #dc3545;
+                color: #fff;
+                border: none;
+                padding: 0.3rem 0.7rem;
+                border-radius: 20px;
+                cursor: pointer;
+                float: right;
+                transition: transform 0.3s, background 0.3s;
+            }
+            .close-btn:hover {
+                transform: scale(1.05);
+                background: #c82333;
             }
             .approve-card a {
                 display: inline-block;
                 margin-top: 1.5rem;
-                padding: 0.75rem 1.5rem;
-                background: #4a90e2;
+                padding: 0.8rem 1.8rem;
+                background: linear-gradient(45deg, #4a90e2, #9013fe);
                 color: #fff;
                 text-decoration: none;
-                border-radius: 5px;
+                border-radius: 25px;
                 font-weight: 500;
-                transition: background 0.3s;
+                transition: transform 0.3s, background 0.3s;
+                animation: bounceIn 1s ease-out;
+            }
+            @keyframes bounceIn {
+                from {
+                    transform: scale(0.8);
+                    opacity: 0;
+                }
+                to {
+                    transform: scale(1);
+                    opacity: 1;
+                }
             }
             .approve-card a:hover {
+                transform: scale(1.05);
                 background: #357abd;
             }
             @media (max-width: 768px) {
@@ -180,25 +328,68 @@
                 }
                 .main-content {
                     margin-left: 0;
+                    padding: 15px;
                 }
                 .main-content.collapsed {
                     margin-left: 0;
                 }
                 .approve-table {
-                    width: 100vw; /* Use viewport width on mobile */
-                    margin-left: -20px; /* Adjust for padding */
+                    width: 100vw;
+                    margin-left: -15px;
+                }
+                .modal-content {
+                    width: 95%;
+                    padding: 1.5rem;
                 }
             }
         </style>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const sidebar = document.querySelector('.sidebar');
+                const sidebar = document.querySelector('#sidebar');
                 const mainContent = document.querySelector('.main-content');
-                const toggleBtn = document.querySelector('.toggle-btn');
 
-                toggleBtn.addEventListener('click', function () {
-                    sidebar.classList.toggle('collapsed');
-                    mainContent.classList.toggle('collapsed');
+                if (sidebar) {
+                    sidebar.addEventListener('click', function (e) {
+                        const toggleBtn = e.target.closest('.toggle-btn');
+                        if (toggleBtn) {
+                            sidebar.classList.toggle('collapsed');
+                            mainContent.classList.toggle('collapsed');
+                        }
+                    });
+                }
+
+                const detailsButtons = document.querySelectorAll('.details-btn');
+                const modal = document.getElementById('myModal');
+                const closeBtn = document.querySelector('.close-btn');
+
+                // Ensure personalRequests and subordinateRequests are JSON-encoded
+                const personalRequests = ${personalRequestsJson != null ? personalRequestsJson : '[]'};
+                const subordinateRequests = ${subordinateRequestsJson != null ? subordinateRequestsJson : '[]'};
+
+                detailsButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const requestId = this.getAttribute('data-id');
+                        const request = [...personalRequests, ...subordinateRequests].find(r => r.requestId === parseInt(requestId));
+                        if (request) {
+                            document.getElementById('modal-start-date').textContent = request.startDate || '-';
+                            document.getElementById('modal-end-date').textContent = request.endDate || '-';
+                            document.getElementById('modal-reason').textContent = request.reason || '-';
+                            document.getElementById('modal-status').textContent = request.status || '-';
+                            document.getElementById('modal-created-by').textContent = request.createdByFullname || '-';
+                            document.getElementById('modal-processed-by').textContent = request.processedByFullname || '-';
+                            modal.style.display = 'flex';
+                        }
+                    });
+                });
+
+                closeBtn.addEventListener('click', function () {
+                    modal.style.display = 'none';
+                });
+
+                window.addEventListener('click', function (event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
                 });
             });
         </script>
@@ -225,6 +416,7 @@
                             <th>Reason</th>
                             <th>Status</th>
                             <th>Action</th>
+                            <th>Details</th>
                         </tr>
                         <c:forEach var="request" items="${leaveRequests}">
                             <tr>
@@ -251,11 +443,27 @@
                                         -
                                     </c:if>
                                 </td>
+                                <td><button class="details-btn" data-id="${request.requestId}">Details</button></td>
                             </tr>
                         </c:forEach>
                     </table>
                 </div>
                 <a href="dashboard">Back to Dashboard</a>
+            </div>
+        </div>
+
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <button class="close-btn">Close</button>
+                <h3>Leave Request Details</h3>
+                <table class="modal-table">
+                    <tr><th>Start Date</th><td id="modal-start-date"></td></tr>
+                    <tr><th>End Date</th><td id="modal-end-date"></td></tr>
+                    <tr><th>Reason</th><td id="modal-reason"></td></tr>
+                    <tr><th>Status</th><td id="modal-status"></td></tr>
+                    <tr><th>Created By</th><td id="modal-created-by"></td></tr>
+                    <tr><th>Processed By</th><td id="modal-processed-by"></td></tr>
+                </table>
             </div>
         </div>
     </body>
