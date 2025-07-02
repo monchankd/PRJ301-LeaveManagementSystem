@@ -6,17 +6,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Leave Request</title>
+    <title>User Profile</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         html, body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
+            height: auto;
             overflow-x: hidden;
-            overflow-y: hidden;
+            overflow-y: auto;
             background: #181f2a;
+            scrollbar-width: none;
         }
         body {
             font-family: 'Roboto', sans-serif;
@@ -24,6 +26,9 @@
             display: flex;
             flex-direction: column;
             color: #fff;
+        }
+        html::-webkit-scrollbar, body::-webkit-scrollbar {
+            display: none;
         }
         .navbar {
             display: flex;
@@ -108,11 +113,11 @@
         }
         .main-content {
             display: flex;
-            height: calc(100vh - 112px);
+            min-height: 100vh;
             min-width: 0;
             padding: 0;
             margin-left: 0;
-            overflow: hidden;
+            overflow: visible;
         }
         .right-panel {
             height: 100%;
@@ -136,98 +141,37 @@
             align-items: center;
             background: rgba(24,31,42,0.95);
         }
-        .clash-logo {
-            width: 100px;
-            height: 100px;
-            background: #222c3a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            color: #f7c873;
-            margin-bottom: 16px;
-        }
-        .score {
-            font-size: 32px;
-            color: #f7c873;
-            margin-bottom: 8px;
-        }
-        .score-label {
-            color: #b0b8c1;
-            margin-bottom: 24px;
-        }
-        .add-btn {
-            background: #f7c873;
-            color: #222c3a;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 8px;
-        }
-        nav {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            align-items: flex-start;
-        }
-        nav a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #fff;
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-        nav a:hover {
-            background: #222c3a;
-            color: #f7c873;
-        }
-        .leave-form-card {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
+        .profile-card {
             background: #222c3a;
             border-radius: 10px;
             padding: 32px 24px;
+            width: 100%;
+            max-width: 400px;
             color: #fff;
             box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            margin: 0 auto;
         }
-        .leave-form-card h2 {
+        .profile-card h2 {
             text-align: center;
             color: #f7c873;
             margin-bottom: 24px;
         }
-        .leave-form-card label {
-            margin-bottom: 4px;
+        .profile-info {
+            margin-top: 16px;
         }
-        .leave-form-card input[type="date"],
-        .leave-form-card textarea {
-            width: 100%;
-            margin-bottom: 12px;
-            padding: 8px;
-            border: 1px solid #2e3a4d;
-            border-radius: 4px;
-            background: #181f2a;
+        .profile-info label {
+            color: #b0b8c1;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .profile-info .value {
             color: #fff;
+            margin-bottom: 12px;
+            display: block;
+            font-size: 1.08em;
         }
-        .leave-form-card button[type="submit"] {
-            width: 100%;
-            background: #f7c873;
-            color: #222c3a;
-            font-weight: bold;
-            padding: 10px 0;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .right-panel .division-list {
+        .division-list {
             width: 100%;
             margin-top: 16px;
         }
@@ -257,14 +201,20 @@
             padding: 6px 32px;
             border-top: 1px solid #222c3a;
             z-index: 10;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
             }
-        .message {
-            background: #f44336;
-            color: white;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            text-align: center;
+            .right-panel {
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                padding: 16px 8px;
+            }
+            .center-panel {
+                padding: 16px 8px;
+            }
         }
     </style>
 </head>
@@ -281,37 +231,39 @@
       <a href="logout" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
     </div>
     <div class="spacer"></div>
-    <div class="user-info" style="display:flex;align-items:center;gap:8px;">
+    <div class="user-info">
       <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Settings"><i class="fas fa-cog"></i></button>
       <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="User Info"><i class="fas fa-user"></i></button>
       <span style="color:#888;margin:0 8px;">|</span>
       <span style="color:#f7c873;">${user.username}</span>
-      <div class="avatar" style="width:40px;height:40px;border-radius:50%;background:#2e3a4d;display:flex;align-items:center;justify-content:center;font-size:20px;color:#f7c873;">${user.username.substring(0,1)}</div>
+      <div class="avatar">${user.username.substring(0,1)}</div>
     </div>
   </div>
   <div class="submenu">
     <a href="dashboard" class="tab-btn">Home</a>
-    <a href="submitLeaveRequest" class="tab-btn active">Submit Leave Request</a>
+    <a href="submitLeaveRequest" class="tab-btn">Submit Leave Request</a>
     <a href="leaveHistory" class="tab-btn">Leave History</a>
     <a href="approveLeave" class="nav-btn">Approve</a>
-    <a href="profile" class="nav-btn">Profile</a>
+    <a href="profile" class="nav-btn active">Profile</a>
   </div>
-    <div class="main-content">
+  <div class="main-content">
     <div class="center-panel">
-      <div class="leave-form-card">
-            <h2>Submit Leave Request</h2>
-        <c:if test="${not empty message}">
-          <div class="message">${message}</div>
-        </c:if>
-            <form action="submitLeaveRequest" method="post">
-          <label style="margin-bottom:4px;">Start Date:</label>
-          <input type="date" name="startDate" required style="width:100%;margin-bottom:12px;">
-          <label style="margin-bottom:4px;">End Date:</label>
-          <input type="date" name="endDate" required style="width:100%;margin-bottom:12px;">
-          <label style="margin-bottom:4px;">Reason:</label>
-          <textarea name="reason" required style="width:100%;margin-bottom:16px;"></textarea>
-          <button type="submit">Submit</button>
-            </form>
+      <div class="profile-card">
+        <h2>User Profile</h2>
+        <div class="profile-info">
+          <label>User ID:</label>
+          <span class="value">${user.userId}</span>
+          <label>Username:</label>
+          <span class="value">${user.username}</span>
+          <label>Full Name:</label>
+          <span class="value">${user.fullname}</span>
+          <label>Role:</label>
+          <span class="value">${user.role}</span>
+          <label>Division:</label>
+          <span class="value">${user.division}</span>
+          <label>Manager ID:</label>
+          <span class="value">${user.managerId}</span>
+        </div>
       </div>
     </div>
     <div class="right-panel">
@@ -323,10 +275,9 @@
             ${member.fullname}
           </div>
         </c:forEach>
-        </div>
+      </div>
     </div>
   </div>
-  <div class="footer">
-    </div>
+  <div class="footer"></div>
 </body>
-</html>
+</html> 

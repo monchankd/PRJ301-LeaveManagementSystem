@@ -18,6 +18,9 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,6 +72,43 @@ public class LoginController {
         // Add user to model for display in JSP
         modelAndView.addObject("user", user);
 
+        // Lấy lịch sử bản thân
+        List<LeaveRequest> personalRequests = new ArrayList<>();
+        List<LeaveRequest> subordinateRequests = new ArrayList<>();
+        personalRequests.addAll(leaveRequestRepository.findByUser_UserId(user.getUserId()));
+
+        // Lấy lịch sử cấp dưới (tối ưu N+1 query)
+        List<Integer> subordinateUserIds = new ArrayList<>();
+        if ("Division Leader".equals(user.getRole())) {
+            List<User> divisionUsers = userRepository.findAll();
+            for (User u : divisionUsers) {
+                if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !(u.getUserId() == user.getUserId()) && !"admin".equals(u.getRole())) {
+                    subordinateUserIds.add(u.getUserId());
+                }
+            }
+        } else {
+            List<User> subordinates = userRepository.findByManagerId(user.getUserId());
+            for (User subordinate : subordinates) {
+                subordinateUserIds.add(subordinate.getUserId());
+            }
+        }
+        if (!subordinateUserIds.isEmpty()) {
+            subordinateRequests = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds);
+        }
+
+        // Thêm fullname cho createdBy và processedBy
+        for (LeaveRequest request : personalRequests) {
+            request.setCreatedByFullname(getFullname(request.getCreatedBy()));
+            request.setProcessedByFullname(getFullname(request.getProcessedBy()));
+        }
+        for (LeaveRequest request : subordinateRequests) {
+            request.setCreatedByFullname(getFullname(request.getCreatedBy()));
+            request.setProcessedByFullname(getFullname(request.getProcessedBy()));
+        }
+
+        modelAndView.addObject("personalRequests", personalRequests);
+        modelAndView.addObject("subordinateRequests", subordinateRequests);
+
         // Populate user list based on role
         if ("admin".equals(user.getRole())) {
             modelAndView.addObject("allUsers", userRepository.findAll());
@@ -81,12 +121,26 @@ public class LoginController {
     }
 
     @GetMapping("/submitLeaveRequest")
-    public String showLeaveRequestForm(HttpSession session) {
+    public ModelAndView showLeaveRequestForm(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/login";
+            modelAndView.setViewName("redirect:/login");
+            return modelAndView;
         }
-        return "leaveRequest";
+
+        // Add user to model for display in JSP
+        modelAndView.addObject("user", user);
+
+        // Populate user list based on role
+        if ("admin".equals(user.getRole())) {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findAll());
+        } else if(!"admin".equals(user.getRole())) {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+        }
+
+        modelAndView.setViewName("leaveRequest");
+        return modelAndView;
     }
 
     @PostMapping("/submitLeaveRequest")
@@ -122,17 +176,30 @@ public class LoginController {
             return modelAndView;
         } catch (DateTimeParseException e) {
             modelAndView.addObject("message", "Invalid date format. Please use YYYY-MM-DD.");
+            modelAndView.addObject("user", user);
+            if ("admin".equals(user.getRole())) {
+                modelAndView.addObject("sameDivisionUsers", userRepository.findAll());
+            } else if(!"admin".equals(user.getRole())) {
+                modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+            }
             modelAndView.setViewName("leaveRequest");
         } catch (Exception e) {
             modelAndView.addObject("message", "An error occurred while submitting the request. Please try again.");
+            modelAndView.addObject("user", user);
+            if ("admin".equals(user.getRole())) {
+                modelAndView.addObject("sameDivisionUsers", userRepository.findAll());
+            } else if(!"admin".equals(user.getRole())) {
+                modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+            }
             modelAndView.setViewName("leaveRequest"); // Giữ lại trang hiện tại nếu có lỗi
-
         }
         return modelAndView;
     }
 
     @GetMapping("/leaveHistory")
-    public ModelAndView showLeaveHistory(HttpSession session) {
+    public ModelAndView showLeaveHistory(HttpSession session,
+                                         @RequestParam(value = "personalPage", defaultValue = "1") int personalPage,
+                                         @RequestParam(value = "subordinatePage", defaultValue = "1") int subordinatePage) {
         ModelAndView modelAndView = new ModelAndView();
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -140,28 +207,40 @@ public class LoginController {
             return modelAndView;
         }
 
-        List<LeaveRequest> personalRequests = new ArrayList<>();
-        List<LeaveRequest> subordinateRequests = new ArrayList<>();
+        int pageSize = 10;
+        // Personal requests pagination
+        Pageable personalPageable = PageRequest.of(personalPage - 1, pageSize);
+        Page<LeaveRequest> personalRequestPage = leaveRequestRepository.findByUser_UserId(user.getUserId(), personalPageable);
+        List<LeaveRequest> personalRequests = personalRequestPage.getContent();
+        int personalTotalPages = personalRequestPage.getTotalPages();
 
-        // Lấy lịch sử bản thân
-        personalRequests.addAll(leaveRequestRepository.findByUser_UserId(user.getUserId()));
-
-        // Kiểm tra vai trò và mở rộng lịch sử cấp dưới, loại bỏ bản thân
+        // Subordinate requests pagination (tối ưu N+1 query)
+        List<Integer> subordinateUserIds = new ArrayList<>();
         if ("Division Leader".equals(user.getRole())) {
             List<User> divisionUsers = userRepository.findAll();
             for (User u : divisionUsers) {
                 if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !(u.getUserId() == user.getUserId()) && !"admin".equals(u.getRole())) {
-                    subordinateRequests.addAll(leaveRequestRepository.findByUser_UserId(u.getUserId()));
+                    subordinateUserIds.add(u.getUserId());
                 }
             }
         } else {
             List<User> subordinates = userRepository.findByManagerId(user.getUserId());
             for (User subordinate : subordinates) {
-                subordinateRequests.addAll(leaveRequestRepository.findByUser_UserId(subordinate.getUserId()));
+                subordinateUserIds.add(subordinate.getUserId());
             }
         }
+        List<LeaveRequest> allSubordinateRequests = new ArrayList<>();
+        if (!subordinateUserIds.isEmpty()) {
+            allSubordinateRequests = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds);
+        }
+        // Manual pagination for subordinate requests
+        int subordinateTotal = allSubordinateRequests.size();
+        int subordinateTotalPages = (int) Math.ceil((double) subordinateTotal / pageSize);
+        int fromIndex = Math.min((subordinatePage - 1) * pageSize, subordinateTotal);
+        int toIndex = Math.min(fromIndex + pageSize, subordinateTotal);
+        List<LeaveRequest> subordinateRequests = allSubordinateRequests.subList(fromIndex, toIndex);
 
-// Thêm fullname cho createdBy và processedBy
+        // Thêm fullname cho createdBy và processedBy
         for (LeaveRequest request : personalRequests) {
             request.setCreatedByFullname(getFullname(request.getCreatedBy()));
             request.setProcessedByFullname(getFullname(request.getProcessedBy()));
@@ -172,7 +251,16 @@ public class LoginController {
         }
 
         modelAndView.addObject("personalRequests", personalRequests);
+        modelAndView.addObject("personalPage", personalPage);
+        modelAndView.addObject("personalTotalPages", personalTotalPages);
         modelAndView.addObject("subordinateRequests", subordinateRequests);
+        modelAndView.addObject("subordinatePage", subordinatePage);
+        modelAndView.addObject("subordinateTotalPages", subordinateTotalPages);
+        if ("admin".equals(user.getRole())) {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findAll());
+        } else {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+        }
         modelAndView.setViewName("leaveHistory");
         return modelAndView;
     }
@@ -198,15 +286,23 @@ public class LoginController {
             leaveRequests = leaveRequestRepository.findAll(); // Admin sees all
         } else if ("Division Leader".equals(user.getRole())) {
             List<User> divisionUsers = userRepository.findAll(); // Get all users in division
+            List<Integer> subordinateUserIds = new ArrayList<>();
             for (User u : divisionUsers) {
                 if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !"admin".equals(u.getRole())) {
-                    leaveRequests.addAll(leaveRequestRepository.findByUser_UserId(u.getUserId()));
+                    subordinateUserIds.add(u.getUserId());
                 }
+            }
+            if (!subordinateUserIds.isEmpty()) {
+                leaveRequests = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds);
             }
         } else if ("Team Leader".equals(user.getRole())) {
             List<User> subordinates = userRepository.findByManagerId(user.getUserId());
+            List<Integer> subordinateUserIds = new ArrayList<>();
             for (User subordinate : subordinates) {
-                leaveRequests.addAll(leaveRequestRepository.findByUser_UserId(subordinate.getUserId()));
+                subordinateUserIds.add(subordinate.getUserId());
+            }
+            if (!subordinateUserIds.isEmpty()) {
+                leaveRequests = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds);
             }
         } else {
             modelAndView.setViewName("redirect:/dashboard");
@@ -214,6 +310,11 @@ public class LoginController {
         }
 
         modelAndView.addObject("leaveRequests", leaveRequests);
+        if ("admin".equals(user.getRole())) {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findAll());
+        } else {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+        }
         modelAndView.setViewName("approveLeave");
         return modelAndView;
     }
@@ -300,4 +401,24 @@ public class LoginController {
         session.invalidate();
         return "redirect:/login";
     }
+
+    @GetMapping("/profile")
+    public ModelAndView showProfile(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            modelAndView.setViewName("redirect:/login");
+            return modelAndView;
+        }
+        modelAndView.addObject("user", user);
+        if ("admin".equals(user.getRole())) {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findAll());
+        } else {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+        }
+        modelAndView.setViewName("profile");
+        return modelAndView;
+    }
 }
+
+

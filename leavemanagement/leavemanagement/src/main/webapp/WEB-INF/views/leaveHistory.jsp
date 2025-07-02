@@ -13,148 +13,160 @@
             html, body {
                 margin: 0;
                 padding: 0;
-                height: 100%;
+                min-height: 100vh;
+                height: auto;
                 overflow-x: hidden;
-                background: linear-gradient(135deg, #4a90e2, #50e3c2);
-                animation: gradientFlow 10s ease infinite;
-            }
-            @keyframes gradientFlow {
-                0% {
-                    background-position: 0% 50%;
-                }
-                50% {
-                    background-position: 100% 50%;
-                }
-                100% {
-                    background-position: 0% 50%;
-                }
+                overflow-y: auto;
+                background: #181f2a;
+                scrollbar-width: none; /* Firefox */
             }
             body {
                 font-family: 'Roboto', sans-serif;
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
-                color: #333;
-            }
-            .sidebar {
-                width: 250px;
-                background: linear-gradient(180deg, #4a90e2, #357abd);
                 color: #fff;
-                height: 100vh;
-                position: fixed;
-                top: 0;
-                left: 0;
-                transition: all 0.3s ease;
-                z-index: 100;
-                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-                animation: sidebarFade 1s ease-in-out;
             }
-            @keyframes sidebarFade {
-                from {
-                    opacity: 0;
-                    transform: translateX(-20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-            }
-            .sidebar.collapsed {
-                width: 70px;
-            }
-            .sidebar .toggle-btn {
-                background: none;
-                border: none;
-                color: #fff;
-                font-size: 1.5rem;
-                padding: 10px;
-                cursor: pointer;
-                width: 100%;
-                text-align: center;
-                transition: color 0.3s;
-            }
-            .sidebar .toggle-btn:hover {
-                color: #50e3c2;
-            }
-            .sidebar .nav-menu {
-                list-style: none;
-                padding: 0;
-                margin: 20px 0;
-            }
-            .sidebar .nav-menu li {
-                padding: 15px 20px;
-                transition: background 0.3s;
-            }
-            .sidebar .nav-menu li a {
-                color: #fff;
-                text-decoration: none;
-                font-size: 1rem;
+            .navbar {
                 display: flex;
                 align-items: center;
-                transition: color 0.3s;
+                background: #181f2a;
+                padding: 0 32px;
+                height: 64px;
+                border-bottom: 2px solid #222c3a;
             }
-            .sidebar .nav-menu li a i {
-                margin-right: 10px;
+            .logo {
+                width: 48px;
+                height: 48px;
+                background: #222c3a;
+                border-radius: 8px;
+                margin-right: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                font-weight: bold;
+                color: #f7c873;
             }
-            .sidebar .nav-menu li a:hover {
-                color: #50e3c2;
+            .icon-bar {
+                display: flex;
+                gap: 16px;
+                margin-right: 24px;
             }
-            .sidebar.collapsed .nav-menu li a span {
-                display: none;
+            .icon-bar a { color: #fff; }
+            .spacer { flex: 1; }
+            .user-info {
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
-            .sidebar.collapsed .nav-menu li a i {
-                margin-right: 0;
+            .avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #2e3a4d;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                color: #f7c873;
+            }
+            .submenu {
+                display: flex;
+                background: #181f2a;
+                border-bottom: 2px solid #222c3a;
+                padding-left: 32px;
+                height: 56px;
+                align-items: center;
+                gap: 8px;
+            }
+            .tab-btn, .nav-btn {
+                background: none;
+                border: 2px solid transparent;
+                color: #f7c873;
+                font-size: 17px;
+                margin-right: 12px;
+                cursor: pointer;
+                padding: 10px 22px;
+                border-radius: 12px;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+                transition: background 0.25s, color 0.25s, box-shadow 0.25s, border 0.25s;
+                box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+                position: relative;
+                z-index: 1;
+            }
+            .tab-btn.active, .nav-btn.active {
+                background: linear-gradient(90deg, #4a90e2 60%, #f7c873 100%);
+                color: #181f2a;
+                border: 2px solid #f7c873;
+                box-shadow: 0 4px 16px 0 rgba(247,200,115,0.18);
+            }
+            .tab-btn:hover, .nav-btn:hover {
+                background: #222c3a;
+                color: #f7c873;
+                border: 2px solid #4a90e2;
+                box-shadow: 0 2px 12px 0 rgba(74,144,226,0.18);
             }
             .main-content {
-                margin-left: 250px;
-                padding: 30px;
-                transition: all 0.3s ease;
-                flex-grow: 1;
-                overflow-x: hidden;
-                box-sizing: border-box;
-                position: relative;
+                display: flex;
+                min-height: 100vh;
+                min-width: 0;
+                padding: 0;
+                margin-left: 0;
+                overflow: visible;
             }
-            .main-content.collapsed {
-                margin-left: 70px;
+            .right-panel {
+                height: 100%;
+                min-height: 0;
+                width: 260px;
+                min-width: 260px;
+                max-width: 260px;
+                background: #181f2a;
+                padding: 32px 16px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .center-panel {
+                flex: 1 1 0;
+                min-width: 0;
+                padding: 32px 40px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: rgba(24,31,42,0.95);
             }
             .history-card {
-                background: rgba(255, 255, 255, 0.9);
-                padding: 2.5rem;
-                border-radius: 15px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                background: #222c3a;
+                border-radius: 10px;
+                padding: 24px 12px;
                 width: 100%;
-                max-width: none;
+                color: #fff;
+                box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+                margin: 0 auto;
+            }
+            .history-card h2 {
                 text-align: center;
+                color: #f7c873;
+                margin-bottom: 18px;
             }
-            .history-card h2, .history-card h3 {
-                margin-bottom: 1.5rem;
-                color: #4a90e2;
-                font-size: 2rem;
-                font-weight: 700;
-                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-                animation: fadeIn 1s ease-in;
+            .history-card h3 {
+                color: #f7c873;
             }
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
+            .history-table-container {
+                overflow-x: auto;
             }
             .history-table {
                 width: 100%;
-                border-collapse: collapse;
-                margin-top: 1rem;
-                overflow-x: auto;
-                table-layout: fixed;
-                background: #fff;
-                border-radius: 10px;
-                overflow: hidden;
+                background: #181f2a;
+                color: #fff;
+                border-radius: 8px;
             }
             .history-table th, .history-table td {
                 padding: 0.75rem;
-                border: 1px solid #ddd;
+                border: 1px solid #222c3a;
                 text-align: left;
                 font-size: 1rem;
                 white-space: nowrap;
@@ -166,10 +178,9 @@
             .history-table th {
                 background: linear-gradient(90deg, #4a90e2, #357abd);
                 color: #fff;
-                width: auto;
             }
             .history-table tr:hover td {
-                background: #f0f8ff;
+                background: #222c3a;
             }
             .history-table td.status-Pending {
                 background: #ffeb3b;
@@ -194,177 +205,100 @@
                 border-radius: 20px;
                 cursor: pointer;
                 transition: transform 0.3s, box-shadow 0.3s;
-                animation: pulse 2s infinite;
-            }
-            @keyframes pulse {
-                0% {
-                    transform: scale(1);
-                }
-                50% {
-                    transform: scale(1.05);
-                }
-                100% {
-                    transform: scale(1);
-                }
             }
             .details-btn:hover {
                 transform: scale(1.1);
                 box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
             }
-            .modal {
-                display: none;
+            .footer {
                 position: fixed;
-                top: 0;
+                bottom: 0;
                 left: 0;
                 width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
+                background: #181f2a;
+                color: #ccc;
+                font-size: 13px;
+                padding: 6px 32px;
+                border-top: 1px solid #222c3a;
+                z-index: 10;
             }
-            .modal-content {
-                background: #fff;
-                padding: 2rem;
-                border-radius: 15px;
-                width: 90%;
-                max-width: 550px;
-                text-align: left;
-                animation: slideDown 0.5s ease-out;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            }
-            @keyframes slideDown {
-                from {
-                    transform: translateY(-50px);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-            }
-            .modal-table {
+            .division-list {
                 width: 100%;
-                border-collapse: collapse;
-                margin-top: 1rem;
+                margin-top: 16px;
             }
-            .modal-table th, .modal-table td {
-                padding: 0.6rem;
-                border: 1px solid #eee;
-                text-align: left;
-                font-size: 1rem;
-            }
-            .modal-table th {
-                background: #f9f9f9;
-                color: #4a90e2;
-            }
-            .close-btn {
-                background: #dc3545;
+            .friend {
+                display: flex;
+                align-items: center;
+                margin-bottom: 12px;
                 color: #fff;
-                border: none;
-                padding: 0.3rem 0.7rem;
-                border-radius: 20px;
-                cursor: pointer;
-                float: right;
-                transition: transform 0.3s, background 0.3s;
+                font-size: 15px;
+                gap: 10px;
             }
-            .close-btn:hover {
-                transform: scale(1.05);
-                background: #c82333;
-            }
-            .history-card a {
-                display: inline-block;
-                margin-top: 1.5rem;
-                padding: 0.8rem 1.8rem;
-                background: linear-gradient(45deg, #4a90e2, #9013fe);
-                color: #fff;
-                text-decoration: none;
-                border-radius: 25px;
-                font-weight: 500;
-                transition: transform 0.3s, background 0.3s;
-                animation: bounceIn 1s ease-out;
-            }
-            @keyframes bounceIn {
-                from {
-                    transform: scale(0.8);
-                    opacity: 0;
-                }
-                to {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-            }
-            .history-card a:hover {
-                transform: scale(1.05);
-                background: #357abd;
+            .friend .status-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                margin-right: 6px;
+                background: #00ff99;
             }
             @media (max-width: 768px) {
-                .sidebar {
-                    transform: translateX(-250px);
-                }
-                .sidebar.collapsed {
-                    transform: translateX(0);
-                }
                 .main-content {
-                    margin-left: 0;
-                    padding: 15px;
+                    flex-direction: column;
                 }
-                .main-content.collapsed {
-                    margin-left: 0;
+                .right-panel {
+                    width: 100%;
+                    max-width: 100%;
+                    min-width: 0;
+                    padding: 16px 8px;
                 }
-                .history-table {
-                    width: 100vw;
-                    margin-left: -15px;
+                .center-panel {
+                    padding: 16px 8px;
                 }
-                .modal-content {
-                    width: 95%;
-                    padding: 1.5rem;
-                }
+            }
+            .pagination {
+                margin: 16px 0 0 0;
+                text-align: center;
+            }
+            .page-btn {
+                display: inline-block;
+                margin: 0 4px;
+                padding: 6px 14px;
+                background: #222c3a;
+                color: #f7c873;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: bold;
+                transition: background 0.2s, color 0.2s;
+            }
+            .page-btn.active, .page-btn:hover {
+                background: #f7c873;
+                color: #222c3a;
+            }
+            /* Hide scrollbar but allow scrolling */
+            html::-webkit-scrollbar, body::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Opera */
             }
         </style>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const sidebar = document.querySelector('#sidebar');
-                const mainContent = document.querySelector('.main-content');
-
-                if (sidebar) {
-                    sidebar.addEventListener('click', function (e) {
-                        const toggleBtn = e.target.closest('.toggle-btn');
-                        if (toggleBtn) {
-                            sidebar.classList.toggle('collapsed');
-                            mainContent.classList.toggle('collapsed');
-                        }
-                    });
-                }
-
                 const detailsButtons = document.querySelectorAll('.details-btn');
                 const modal = document.getElementById('myModal');
                 const closeBtn = document.querySelector('.close-btn');
-
-                // Ensure personalRequests and subordinateRequests are JSON-encoded
-                const personalRequests = ${personalRequestsJson != null ? personalRequestsJson : '[]'};
-                const subordinateRequests = ${subordinateRequestsJson != null ? subordinateRequestsJson : '[]'};
-
                 detailsButtons.forEach(button => {
                     button.addEventListener('click', function () {
-                        const requestId = this.getAttribute('data-id');
-                        const request = [...personalRequests, ...subordinateRequests].find(r => r.requestId === parseInt(requestId));
-                        if (request) {
-                            document.getElementById('modal-start-date').textContent = request.startDate || '-';
-                            document.getElementById('modal-end-date').textContent = request.endDate || '-';
-                            document.getElementById('modal-reason').textContent = request.reason || '-';
-                            document.getElementById('modal-status').textContent = request.status || '-';
-                            document.getElementById('modal-created-by').textContent = request.createdByFullname || '-';
-                            document.getElementById('modal-processed-by').textContent = request.processedByFullname || '-';
-                            modal.style.display = 'flex';
-                        }
+                        const row = this.closest('tr');
+                        document.getElementById('modal-start-date').textContent = row.querySelector('.start-date').textContent;
+                        document.getElementById('modal-end-date').textContent = row.querySelector('.end-date').textContent;
+                        document.getElementById('modal-reason').textContent = row.querySelector('.reason').textContent;
+                        document.getElementById('modal-status').textContent = row.querySelector('.status').textContent;
+                        document.getElementById('modal-created-by').textContent = row.querySelector('.created-by').textContent;
+                        document.getElementById('modal-processed-by').textContent = row.querySelector('.processed-by').textContent;
+                        modal.style.display = 'flex';
                     });
                 });
-
                 closeBtn.addEventListener('click', function () {
                     modal.style.display = 'none';
                 });
-
                 window.addEventListener('click', function (event) {
                     if (event.target === modal) {
                         modal.style.display = 'none';
@@ -373,55 +307,43 @@
             });
         </script>
     </head>
-    <body>
-        <jsp:include page="/WEB-INF/jsp/sidebar.jsp" />
+    <body style="margin:0;">
+        <div class="navbar">
+            <div class="logo">L</div>
+            <div class="icon-bar">
+                <a href="dashboard" title="Dashboard"><i class="fas fa-tachometer-alt"></i></a>
+                <a href="submitLeaveRequest" title="Submit Leave Request"><i class="fas fa-calendar"></i></a>
+                <a href="leaveHistory" title="Leave History"><i class="fas fa-history"></i></a>
+                <c:if test="${user.role == 'admin' || user.role == 'Division Leader' || user.role == 'Team Leader'}">
+                    <a href="approveLeave" title="Approve"><i class="fas fa-check"></i></a>
+                </c:if>
+                <a href="logout" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+            <div class="spacer"></div>
+            <div class="user-info">
+                <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Settings"><i class="fas fa-cog"></i></button>
+                <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="User Info"><i class="fas fa-user"></i></button>
+                <span style="color:#888;margin:0 8px;">|</span>
+                <span style="color:#f7c873;">${user.username}</span>
+                <div class="avatar">${user.username.substring(0,1)}</div>
+            </div>
+        </div>
+        <div class="submenu">
+            <a href="dashboard" class="tab-btn">Home</a>
+            <a href="submitLeaveRequest" class="tab-btn">Submit Leave Request</a>
+            <a href="leaveHistory" class="tab-btn active">Leave History</a>
+            <a href="approveLeave" class="nav-btn">Approve</a>
+            <a href="profile" class="nav-btn">Profile</a>
+        </div>
         <div class="main-content">
-            <div class="history-card">
-                <h2>Leave Request History</h2>
-                <% 
-                    com.companyx.leavemanagement.models.User user = (com.companyx.leavemanagement.models.User) session.getAttribute("user");
-                    if (user == null) {
-                        response.sendRedirect("login");
-                        return;
-                    }
-                %>
-                <!-- Bảng cho lịch sử bản thân -->
-                <h3>Personal History</h3>
-                <div class="history-table-container">
-                    <table class="history-table">
-                        <tr>
-                            <th>Request ID</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Reason</th>
-                            <th>Status</th>
-                            <th>Created By</th>
-                            <th>Processed By</th>
-                            <th>Details</th>
-                        </tr>
-                        <c:forEach var="request" items="${personalRequests}">
-                            <tr>
-                                <td>${request.requestId}</td>
-                                <td>${request.startDate}</td>
-                                <td>${request.endDate}</td>
-                                <td>${request.reason}</td>
-                                <td class="status-${request.status}">${request.status}</td>
-                                <td>${request.createdByFullname}</td>
-                                <td>${request.processedByFullname}</td>
-                                <td><button class="details-btn" data-id="${request.requestId}">Details</button></td>
-                            </tr>
-                        </c:forEach>
-                    </table>
-                </div>
-
-                <!-- Bảng cho lịch sử cấp dưới -->
-                <c:if test="${not empty subordinateRequests}">
-                    <h3>Subordinates' History</h3>
+            <div class="center-panel">
+                <div class="history-card">
+                    <h2>Leave Request History</h2>
+                    <h3>Personal History</h3>
                     <div class="history-table-container">
                         <table class="history-table">
                             <tr>
                                 <th>Request ID</th>
-                                <th>Username</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Reason</th>
@@ -430,31 +352,87 @@
                                 <th>Processed By</th>
                                 <th>Details</th>
                             </tr>
-                            <c:forEach var="request" items="${subordinateRequests}">
+                            <c:forEach var="request" items="${personalRequests}">
                                 <tr>
                                     <td>${request.requestId}</td>
-                                    <td>${request.user.username}</td>
-                                    <td>${request.startDate}</td>
-                                    <td>${request.endDate}</td>
-                                    <td>${request.reason}</td>
-                                    <td class="status-${request.status}">${request.status}</td>
-                                    <td>${request.createdByFullname}</td>
-                                    <td>${request.processedByFullname}</td>
-                                    <td><button class="details-btn" data-id="${request.requestId}">Details</button></td>
+                                    <td class="start-date">${request.startDate}</td>
+                                    <td class="end-date">${request.endDate}</td>
+                                    <td class="reason">${request.reason}</td>
+                                    <td class="status status-${request.status}">${request.status}</td>
+                                    <td class="created-by">${request.createdByFullname}</td>
+                                    <td class="processed-by">${request.processedByFullname}</td>
+                                    <td><button class="details-btn">Details</button></td>
                                 </tr>
                             </c:forEach>
                         </table>
                     </div>
-                </c:if>
-                <a href="dashboard">Back to Dashboard</a>
+                    <!-- Pagination for personal history -->
+                    <c:if test="${personalTotalPages > 1}">
+                        <div class="pagination">
+                            <c:forEach var="i" begin="1" end="${personalTotalPages}">
+                                <a href="leaveHistory?personalPage=${i}&subordinatePage=${subordinatePage}" class="page-btn${i == personalPage ? ' active' : ''}">${i}</a>
+                            </c:forEach>
+                        </div>
+                    </c:if>
+                    <c:if test="${not empty subordinateRequests}">
+                        <h3>Subordinates' History</h3>
+                        <div class="history-table-container">
+                            <table class="history-table">
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>Username</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Created By</th>
+                                    <th>Processed By</th>
+                                    <th>Details</th>
+                                </tr>
+                                <c:forEach var="request" items="${subordinateRequests}">
+                                    <tr>
+                                        <td>${request.requestId}</td>
+                                        <td>${request.user.username}</td>
+                                        <td class="start-date">${request.startDate}</td>
+                                        <td class="end-date">${request.endDate}</td>
+                                        <td class="reason">${request.reason}</td>
+                                        <td class="status status-${request.status}">${request.status}</td>
+                                        <td class="created-by">${request.createdByFullname}</td>
+                                        <td class="processed-by">${request.processedByFullname}</td>
+                                        <td><button class="details-btn">Details</button></td>
+                                    </tr>
+                                </c:forEach>
+                            </table>
+                        </div>
+                        <!-- Pagination for subordinate history -->
+                        <c:if test="${subordinateTotalPages > 1}">
+                            <div class="pagination">
+                                <c:forEach var="i" begin="1" end="${subordinateTotalPages}">
+                                    <a href="leaveHistory?personalPage=${personalPage}&subordinatePage=${i}" class="page-btn${i == subordinatePage ? ' active' : ''}">${i}</a>
+                                </c:forEach>
+                            </div>
+                        </c:if>
+                    </c:if>
+                </div>
+            </div>
+            <div class="right-panel">
+                <div style="font-weight:bold; margin-bottom:10px; color:#f7c873;">DIVISION MEMBERS</div>
+                <div class="division-list">
+                    <c:forEach var="member" items="${sameDivisionUsers}">
+                        <div class="friend online">
+                            <span class="status-dot"></span>
+                            ${member.fullname}
+                        </div>
+                    </c:forEach>
+                </div>
             </div>
         </div>
-
-        <div id="myModal" class="modal">
-            <div class="modal-content">
-                <button class="close-btn">Close</button>
+        <div class="footer"></div>
+        <div id="myModal" class="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:1000;">
+            <div class="modal-content" style="background:#222c3a;padding:2rem;border-radius:15px;width:90%;max-width:550px;text-align:left;box-shadow:0 10px 30px rgba(0,0,0,0.2);color:#fff;">
+                <button class="close-btn" style="background:#dc3545;color:#fff;border:none;padding:0.3rem 0.7rem;border-radius:20px;cursor:pointer;float:right;">Close</button>
                 <h3>Leave Request Details</h3>
-                <table class="modal-table">
+                <table class="modal-table" style="width:100%;border-collapse:collapse;margin-top:1rem;">
                     <tr><th>Start Date</th><td id="modal-start-date"></td></tr>
                     <tr><th>End Date</th><td id="modal-end-date"></td></tr>
                     <tr><th>Reason</th><td id="modal-reason"></td></tr>
