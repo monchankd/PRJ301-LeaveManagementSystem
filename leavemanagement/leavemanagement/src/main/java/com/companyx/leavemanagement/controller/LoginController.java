@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.Model;
 
 @Controller
 public class LoginController {
@@ -418,6 +421,52 @@ public class LoginController {
         }
         modelAndView.setViewName("profile");
         return modelAndView;
+    }
+
+    @GetMapping("/agenda")
+    public String agendaPage(@RequestParam(value = "fromDate", required = false) String fromDate,
+                            @RequestParam(value = "toDate", required = false) String toDate,
+                            Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !"Division Leader".equals(user.getRole())) {
+            return "redirect:/login";
+        }
+        List<String> dateHeaders = new ArrayList<>();
+        List<Map<String, Object>> agendaMatrix = new ArrayList<>();
+        if (fromDate != null && toDate != null) {
+            LocalDate start = LocalDate.parse(fromDate);
+            LocalDate end = LocalDate.parse(toDate);
+            for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
+                dateHeaders.add(d.getDayOfMonth() + "/" + d.getMonthValue());
+            }
+            List<User> members = userRepository.findByDivision(user.getDivision());
+            for (User member : members) {
+                if ("admin".equals(member.getRole())) continue;
+                Map<String, Object> row = new HashMap<>();
+                row.put("name", member.getFullname());
+                List<Map<String, String>> cells = new ArrayList<>();
+                List<LeaveRequest> leaves = leaveRequestRepository.findByUser_UserId(member.getUserId());
+                for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
+                    boolean isLeave = false;
+                    for (LeaveRequest leave : leaves) {
+                        if (leave.getStatus().equals("Approved") &&
+                            (d.compareTo(leave.getStartDate()) >= 0 && d.compareTo(leave.getEndDate()) <= 0)) {
+                            isLeave = true;
+                            break;
+                        }
+                    }
+                    Map<String, String> cell = new HashMap<>();
+                    cell.put("status", isLeave ? "leave" : "working");
+                    cells.add(cell);
+                }
+                row.put("cells", cells);
+                agendaMatrix.add(row);
+            }
+        }
+        model.addAttribute("dateHeaders", dateHeaders);
+        model.addAttribute("agendaMatrix", agendaMatrix);
+        model.addAttribute("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+        return "agenda";
     }
 }
 

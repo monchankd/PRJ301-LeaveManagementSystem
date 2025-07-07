@@ -131,21 +131,18 @@
             .center-panel {
                 flex: 1 1 0;
                 min-width: 0;
-                padding: 32px 40px;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
+                padding: 16px 40px 24px 40px;
+                display: block;
                 background: rgba(24,31,42,0.95);
             }
             .history-card {
                 background: #222c3a;
                 border-radius: 10px;
-                padding: 24px 12px;
+                padding: 20px 12px 24px 12px;
                 width: 100%;
                 color: #fff;
                 box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-                margin: 0 auto;
+                margin: 12px auto 0 auto;
             }
             .history-card h2 {
                 text-align: center;
@@ -181,6 +178,15 @@
             }
             .history-table tr:hover td {
                 background: #222c3a;
+            }
+            .history-table tr:hover td.status-Pending {
+                color: #fff;
+            }
+            .history-table tr:hover td.status-Approved {
+                color: #fff;
+            }
+            .history-table tr:hover td.status-Rejected {
+                color: #fff;
             }
             .history-table td.status-Pending {
                 background: #ffeb3b;
@@ -289,7 +295,8 @@
                         const row = this.closest('tr');
                         document.getElementById('modal-start-date').textContent = row.querySelector('.start-date').textContent;
                         document.getElementById('modal-end-date').textContent = row.querySelector('.end-date').textContent;
-                        document.getElementById('modal-reason').textContent = row.querySelector('.reason').textContent;
+                        document.getElementById('modal-request-id').textContent = row.getAttribute('data-request-id');
+                        document.getElementById('modal-reason').textContent = row.getAttribute('data-reason');
                         document.getElementById('modal-status').textContent = row.querySelector('.status').textContent;
                         document.getElementById('modal-created-by').textContent = row.querySelector('.created-by').textContent;
                         document.getElementById('modal-processed-by').textContent = row.querySelector('.processed-by').textContent;
@@ -332,7 +339,12 @@
             <a href="dashboard" class="tab-btn">Home</a>
             <a href="submitLeaveRequest" class="tab-btn">Submit Leave Request</a>
             <a href="leaveHistory" class="tab-btn active">Leave History</a>
-            <a href="approveLeave" class="nav-btn">Approve</a>
+            <c:if test="${user != null && (user.role == 'admin' || user.role == 'Division Leader' || user.role == 'Team Leader')}">
+                <a href="approveLeave" class="nav-btn">Approve</a>
+            </c:if>
+            <c:if test="${user.role == 'Division Leader'}">
+                <a href="agenda" class="nav-btn">Agenda</a>
+            </c:if>
             <a href="profile" class="nav-btn">Profile</a>
         </div>
         <div class="main-content">
@@ -343,21 +355,17 @@
                     <div class="history-table-container">
                         <table class="history-table">
                             <tr>
-                                <th>Request ID</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                <th>Reason</th>
                                 <th>Status</th>
                                 <th>Created By</th>
                                 <th>Processed By</th>
                                 <th>Details</th>
                             </tr>
                             <c:forEach var="request" items="${personalRequests}">
-                                <tr>
-                                    <td>${request.requestId}</td>
+                                <tr data-request-id="${request.requestId}" data-reason="${request.reason}">
                                     <td class="start-date">${request.startDate}</td>
                                     <td class="end-date">${request.endDate}</td>
-                                    <td class="reason">${request.reason}</td>
                                     <td class="status status-${request.status}">${request.status}</td>
                                     <td class="created-by">${request.createdByFullname}</td>
                                     <td class="processed-by">${request.processedByFullname}</td>
@@ -379,23 +387,19 @@
                         <div class="history-table-container">
                             <table class="history-table">
                                 <tr>
-                                    <th>Request ID</th>
                                     <th>Username</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
-                                    <th>Reason</th>
                                     <th>Status</th>
                                     <th>Created By</th>
                                     <th>Processed By</th>
                                     <th>Details</th>
                                 </tr>
                                 <c:forEach var="request" items="${subordinateRequests}">
-                                    <tr>
-                                        <td>${request.requestId}</td>
+                                    <tr data-request-id="${request.requestId}" data-reason="${request.reason}">
                                         <td>${request.user.username}</td>
                                         <td class="start-date">${request.startDate}</td>
                                         <td class="end-date">${request.endDate}</td>
-                                        <td class="reason">${request.reason}</td>
                                         <td class="status status-${request.status}">${request.status}</td>
                                         <td class="created-by">${request.createdByFullname}</td>
                                         <td class="processed-by">${request.processedByFullname}</td>
@@ -419,10 +423,12 @@
                 <div style="font-weight:bold; margin-bottom:10px; color:#f7c873;">DIVISION MEMBERS</div>
                 <div class="division-list">
                     <c:forEach var="member" items="${sameDivisionUsers}">
-                        <div class="friend online">
-                            <span class="status-dot"></span>
-                            ${member.fullname}
-                        </div>
+                        <c:if test="${member.role != 'admin'}">
+                            <div class="friend online">
+                                <span class="status-dot"></span>
+                                ${member.fullname}
+                            </div>
+                        </c:if>
                     </c:forEach>
                 </div>
             </div>
@@ -433,6 +439,7 @@
                 <button class="close-btn" style="background:#dc3545;color:#fff;border:none;padding:0.3rem 0.7rem;border-radius:20px;cursor:pointer;float:right;">Close</button>
                 <h3>Leave Request Details</h3>
                 <table class="modal-table" style="width:100%;border-collapse:collapse;margin-top:1rem;">
+                    <tr><th>Request ID</th><td id="modal-request-id"></td></tr>
                     <tr><th>Start Date</th><td id="modal-start-date"></td></tr>
                     <tr><th>End Date</th><td id="modal-end-date"></td></tr>
                     <tr><th>Reason</th><td id="modal-reason"></td></tr>

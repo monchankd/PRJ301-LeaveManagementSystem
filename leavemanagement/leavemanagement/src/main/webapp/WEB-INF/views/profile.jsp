@@ -134,42 +134,76 @@
         .center-panel {
             flex: 1 1 0;
             min-width: 0;
-            padding: 32px 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            padding: 16px 40px 24px 40px;
+            display: block;
             background: rgba(24,31,42,0.95);
         }
         .profile-card {
-            background: #222c3a;
-            border-radius: 10px;
-            padding: 32px 24px;
+            background: linear-gradient(135deg, #232b3a 60%, #2e3a4d 100%);
+            border-radius: 18px;
+            padding: 28px 32px 32px 32px;
             width: 100%;
-            max-width: 400px;
+            max-width: 480px;
             color: #fff;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-            margin: 0 auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            margin: 12px auto 0 auto;
+            position: relative;
         }
-        .profile-card h2 {
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a90e2 60%, #f7c873 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #222c3a;
+            font-weight: bold;
+            margin: 0 auto 18px auto;
+            box-shadow: 0 2px 12px rgba(74,144,226,0.18);
+        }
+        .profile-name {
             text-align: center;
+            font-size: 1.7rem;
+            font-weight: 700;
             color: #f7c873;
-            margin-bottom: 24px;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
         }
-        .profile-info {
-            margin-top: 16px;
+        .profile-username {
+            text-align: center;
+            color: #b0b8c1;
+            font-size: 1.1rem;
+            margin-bottom: 18px;
         }
-        .profile-info label {
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 24px;
+            margin-top: 12px;
+        }
+        .profile-info-item {
+            display: flex;
+            align-items: center;
+            background: #181f2a;
+            border-radius: 8px;
+            padding: 10px 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .profile-info-item i {
+            margin-right: 10px;
+            color: #4a90e2;
+            font-size: 1.2em;
+        }
+        .profile-info-label {
             color: #b0b8c1;
             font-weight: 500;
-            display: block;
-            margin-bottom: 2px;
+            margin-right: 6px;
         }
-        .profile-info .value {
+        .profile-info-value {
             color: #fff;
-            margin-bottom: 12px;
-            display: block;
-            font-size: 1.08em;
+            font-weight: 500;
         }
         .division-list {
             width: 100%;
@@ -243,26 +277,25 @@
     <a href="dashboard" class="tab-btn">Home</a>
     <a href="submitLeaveRequest" class="tab-btn">Submit Leave Request</a>
     <a href="leaveHistory" class="tab-btn">Leave History</a>
-    <a href="approveLeave" class="nav-btn">Approve</a>
+    <c:if test="${user.role == 'admin' || user.role == 'Division Leader' || user.role == 'Team Leader'}">
+      <a href="approveLeave" class="nav-btn">Approve</a>
+    </c:if>
+    <c:if test="${user.role == 'Division Leader'}">
+      <a href="agenda" class="nav-btn">Agenda</a>
+    </c:if>
     <a href="profile" class="nav-btn active">Profile</a>
   </div>
   <div class="main-content">
     <div class="center-panel">
       <div class="profile-card">
-        <h2>User Profile</h2>
-        <div class="profile-info">
-          <label>User ID:</label>
-          <span class="value">${user.userId}</span>
-          <label>Username:</label>
-          <span class="value">${user.username}</span>
-          <label>Full Name:</label>
-          <span class="value">${user.fullname}</span>
-          <label>Role:</label>
-          <span class="value">${user.role}</span>
-          <label>Division:</label>
-          <span class="value">${user.division}</span>
-          <label>Manager ID:</label>
-          <span class="value">${user.managerId}</span>
+        <div class="profile-avatar">${user.fullname != null ? user.fullname.substring(0,1) : "U"}</div>
+        <div class="profile-name">${user.fullname}</div>
+        <div class="profile-username">@${user.username}</div>
+        <div class="profile-info-grid">
+          <div class="profile-info-item"><i class="fas fa-id-badge"></i><span class="profile-info-label">User ID:</span><span class="profile-info-value">${user.userId}</span></div>
+          <div class="profile-info-item"><i class="fas fa-user-tag"></i><span class="profile-info-label">Role:</span><span class="profile-info-value">${user.role}</span></div>
+          <div class="profile-info-item"><i class="fas fa-users"></i><span class="profile-info-label">Division:</span><span class="profile-info-value">${user.division}</span></div>
+          <div class="profile-info-item"><i class="fas fa-user-tie"></i><span class="profile-info-label">Manager ID:</span><span class="profile-info-value">${user.managerId}</span></div>
         </div>
       </div>
     </div>
@@ -270,10 +303,12 @@
       <div style="font-weight:bold; margin-bottom:10px; color:#f7c873;">DIVISION MEMBERS</div>
       <div class="division-list">
         <c:forEach var="member" items="${sameDivisionUsers}">
-          <div class="friend online">
-            <span class="status-dot"></span>
-            ${member.fullname}
-          </div>
+          <c:if test="${member.role != 'admin'}">
+            <div class="friend online">
+              <span class="status-dot"></span>
+              ${member.fullname}
+            </div>
+          </c:if>
         </c:forEach>
       </div>
     </div>

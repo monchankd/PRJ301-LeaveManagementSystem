@@ -363,7 +363,12 @@
     <a href="dashboard" class="tab-btn active">Home</a>
     <a href="submitLeaveRequest" class="tab-btn">Submit Leave Request</a>
     <a href="leaveHistory" class="tab-btn">Leave History</a>
-    <a href="approveLeave" class="nav-btn">Approve</a>
+    <c:if test="${user.role == 'admin' || user.role == 'Division Leader' || user.role == 'Team Leader'}">
+      <a href="approveLeave" class="nav-btn">Approve</a>
+    </c:if>
+    <c:if test="${user.role == 'Division Leader'}">
+      <a href="agenda" class="nav-btn">Agenda</a>
+    </c:if>
     <a href="profile" class="nav-btn">Profile</a>
   </div>
   <div class="main-content" style="display:flex;height:calc(100vh - 112px);padding:0;margin-left:0;">
@@ -438,10 +443,12 @@
       <div style="font-weight:bold; margin-bottom:10px; color:#f7c873;">DIVISION MEMBERS</div>
       <div class="division-list" style="width:100%;margin-top:16px;">
         <c:forEach var="member" items="${sameDivisionUsers}">
-          <div class="friend online" style="display:flex;align-items:center;margin-bottom:12px;color:#fff;font-size:15px;gap:10px;">
-            <span class="status-dot" style="width:10px;height:10px;border-radius:50%;background:#00ff99;margin-right:6px;"></span>
-            ${member.fullname}
-          </div>
+          <c:if test="${member.role != 'admin'}">
+            <div class="friend online" style="display:flex;align-items:center;margin-bottom:12px;color:#fff;font-size:15px;gap:10px;">
+              <span class="status-dot" style="width:10px;height:10px;border-radius:50%;background:#00ff99;margin-right:6px;"></span>
+              ${member.fullname}
+            </div>
+          </c:if>
         </c:forEach>
         </div>
     </div>

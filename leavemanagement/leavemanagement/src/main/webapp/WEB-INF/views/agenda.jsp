@@ -6,7 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Approve Leave Requests</title>
+        <title>Agenda</title>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <style>
@@ -18,7 +18,7 @@
                 overflow-x: hidden;
                 overflow-y: auto;
                 background: #181f2a;
-                scrollbar-width: none; /* Firefox */
+                scrollbar-width: none;
             }
             body {
                 font-family: 'Roboto', sans-serif;
@@ -26,9 +26,6 @@
                 display: flex;
                 flex-direction: column;
                 color: #fff;
-            }
-            html::-webkit-scrollbar, body::-webkit-scrollbar {
-                display: none; /* Chrome, Safari, Opera */
             }
             .navbar {
                 display: flex;
@@ -138,7 +135,7 @@
                 display: block;
                 background: rgba(24,31,42,0.95);
             }
-            .approve-card {
+            .agenda-card {
                 background: #222c3a;
                 border-radius: 10px;
                 padding: 20px 12px 24px 12px;
@@ -147,121 +144,82 @@
                 box-shadow: 0 4px 24px rgba(0,0,0,0.2);
                 margin: 16px auto 0 auto;
             }
-            .approve-card h2 {
+            .agenda-card h2 {
                 text-align: center;
                 color: #f7c873;
                 margin-bottom: 18px;
             }
-            .approve-table-container {
+            .filter-row {
+                display: flex;
+                gap: 16px;
+                margin-bottom: 24px;
+                align-items: center;
+            }
+            .filter-row label { color: #f7c873; }
+            .filter-row input[type="date"] {
+                background: #181f2a;
+                color: #fff;
+                border: 1px solid #2e3a4d;
+                border-radius: 4px;
+                padding: 6px 12px;
+            }
+            .filter-row button {
+                background: #f7c873;
+                color: #222c3a;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 18px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            .agenda-table-container {
                 overflow-x: auto;
             }
-            .approve-table {
+            .agenda-table {
                 width: 100%;
                 background: #181f2a;
                 color: #fff;
                 border-radius: 8px;
+                border-collapse: collapse;
             }
-            .approve-table th, .approve-table td {
+            .agenda-table th, .agenda-table td {
                 padding: 0.75rem;
                 border: 1px solid #222c3a;
-                text-align: left;
+                text-align: center;
                 font-size: 1rem;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                box-sizing: border-box;
-                transition: background 0.3s;
+                min-width: 60px;
             }
-            .approve-table th {
+            .agenda-table th {
                 background: linear-gradient(90deg, #4a90e2, #357abd);
                 color: #fff;
             }
-            .approve-table tr:hover td {
-                background: #222c3a;
-            }
-            .approve-table td.status-Pending {
-                background: #ffeb3b;
-                color: #333;
-                font-weight: 500;
-            }
-            .approve-table td.status-Approved {
-                background: #28a745;
+            .agenda-table tr:hover td {
+                background: #2e3a4d;
                 color: #fff;
-                font-weight: 500;
+                border-top: 2px solid #4a90e2;
+                border-bottom: 2px solid #4a90e2;
             }
-            .approve-table td.status-Rejected {
+            .agenda-table tr:hover td.cell-leave {
+                background: #ff4d4d;
+                color: #fff;
+                border: 2px solid #f7c873;
+                box-shadow: 0 0 8px 2px #f7c87355;
+                z-index: 1;
+            }
+            .cell-working {
+                background: #7ed957;
+                color: #222c3a;
+                font-weight: bold;
+            }
+            .cell-leave {
                 background: #dc3545;
                 color: #fff;
-                font-weight: 500;
+                font-weight: bold;
             }
-            .approve-table tr:hover td.status-Pending {
-                color: #fff;
-            }
-            .approve-table tr:hover td.status-Approved {
-                color: #fff;
-            }
-            .approve-table tr:hover td.status-Rejected {
-                color: #fff;
-            }
-            .approve-table td.status-Pending {
-                background: #ffeb3b;
-                color: #333;
-                font-weight: 500;
-            }
-            .approve-table td.status-Approved {
-                background: #28a745;
-                color: #fff;
-                font-weight: 500;
-            }
-            .approve-table td.status-Rejected {
-                background: #dc3545;
-                color: #fff;
-                font-weight: 500;
-            }
-            .approve-table td form {
-                display: inline;
-            }
-            .approve-table input[type="submit"] {
-                padding: 0.3rem 0.7rem;
-                margin: 0 0.25rem;
-                background: linear-gradient(45deg, #28a745, #218838);
-                color: #fff;
-                border: none;
-                border-radius: 20px;
-                cursor: pointer;
-                transition: transform 0.3s, background 0.3s;
-            }
-            .approve-table input[type="submit"].reject {
-                background: linear-gradient(45deg, #dc3545, #c82333);
-            }
-            .approve-table input[type="submit"]:hover {
-                transform: scale(1.05);
-                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.5);
-            }
-            .details-btn {
-                background: linear-gradient(45deg, #4a90e2, #9013fe);
-                color: #fff;
-                border: none;
-                padding: 0.3rem 0.7rem;
-                border-radius: 20px;
-                cursor: pointer;
-                transition: transform 0.3s, box-shadow 0.3s;
-            }
-            .details-btn:hover {
-                transform: scale(1.1);
-                box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
-            }
-            .footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                background: #181f2a;
-                color: #ccc;
-                font-size: 13px;
-                padding: 6px 32px;
-                border-top: 1px solid #222c3a;
-                z-index: 10;
+            .agenda-table td.name-cell {
+                background: #fff;
+                color: #222c3a;
+                font-weight: bold;
             }
             .division-list {
                 width: 100%;
@@ -282,6 +240,18 @@
                 margin-right: 6px;
                 background: #00ff99;
             }
+            .footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: #181f2a;
+                color: #ccc;
+                font-size: 13px;
+                padding: 6px 32px;
+                border-top: 1px solid #222c3a;
+                z-index: 10;
+            }
             @media (max-width: 768px) {
                 .main-content {
                     flex-direction: column;
@@ -297,34 +267,6 @@
                 }
             }
         </style>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const detailsButtons = document.querySelectorAll('.details-btn');
-                const modal = document.getElementById('myModal');
-                const closeBtn = document.querySelector('.close-btn');
-                detailsButtons.forEach(button => {
-                    button.addEventListener('click', function () {
-                        const row = this.closest('tr');
-                        document.getElementById('modal-start-date').textContent = row.querySelector('.start-date').textContent;
-                        document.getElementById('modal-end-date').textContent = row.querySelector('.end-date').textContent;
-                        document.getElementById('modal-request-id').textContent = row.getAttribute('data-request-id');
-                        document.getElementById('modal-reason').textContent = row.getAttribute('data-reason');
-                        document.getElementById('modal-status').textContent = row.querySelector('.status').textContent;
-                        document.getElementById('modal-created-by').textContent = row.querySelector('td:first-child').textContent; // Username
-                        document.getElementById('modal-processed-by').textContent = 'N/A'; // Not available in approve table
-                        modal.style.display = 'flex';
-                    });
-                });
-                closeBtn.addEventListener('click', function () {
-                    modal.style.display = 'none';
-                });
-                window.addEventListener('click', function (event) {
-                    if (event.target === modal) {
-                        modal.style.display = 'none';
-                    }
-                });
-            });
-        </script>
     </head>
     <body style="margin:0;">
         <div class="navbar">
@@ -351,54 +293,42 @@
             <a href="dashboard" class="tab-btn">Home</a>
             <a href="submitLeaveRequest" class="tab-btn">Submit Leave Request</a>
             <a href="leaveHistory" class="tab-btn">Leave History</a>
-            <a href="approveLeave" class="nav-btn active">Approve</a>
+            <a href="approveLeave" class="nav-btn">Approve</a>
             <c:if test="${user.role == 'Division Leader'}">
-                <a href="agenda" class="nav-btn">Agenda</a>
+                <a href="agenda" class="nav-btn active">Agenda</a>
             </c:if>
             <a href="profile" class="nav-btn">Profile</a>
         </div>
         <div class="main-content">
             <div class="center-panel">
-                <div class="approve-card">
-                    <h2>Approve Leave Requests</h2>
-                    <div class="approve-table-container">
-                        <table class="approve-table">
+                <div class="agenda-card">
+                    <h2>Division Agenda Overview</h2>
+                    <form class="filter-row" method="get" action="agenda">
+                        <label>From: <input type="date" name="fromDate" value="${param.fromDate}" required></label>
+                        <label>To: <input type="date" name="toDate" value="${param.toDate}" required></label>
+                        <button type="submit">Filter</button>
+                    </form>
+                    <div class="agenda-table-container">
+                        <table class="agenda-table">
                             <tr>
-                                <th>Username</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                                <th>Details</th>
+                                <th>Nhân sự</th>
+                                <c:forEach var="date" items="${dateHeaders}">
+                                    <th>${date}</th>
+                                </c:forEach>
                             </tr>
-                            <c:forEach var="request" items="${leaveRequests}">
-                                <tr data-request-id="${request.requestId}" data-reason="${request.reason}">
-                                    <td>${request.user.username}</td>
-                                    <td class="start-date">${request.startDate}</td>
-                                    <td class="end-date">${request.endDate}</td>
-                                    <td class="status status-${request.status}">${request.status}</td>
-                                    <td>
-                                        <c:if test="${request.status == 'Pending'}">
-                                            <form action="approveLeave" method="post">
-                                                <input type="hidden" name="requestId" value="${request.requestId}">
-                                                <input type="hidden" name="action" value="approve">
-                                                <input type="submit" value="Approve">
-                                            </form>
-                                            <form action="approveLeave" method="post">
-                                                <input type="hidden" name="requestId" value="${request.requestId}">
-                                                <input type="hidden" name="action" value="reject">
-                                                <input type="submit" class="reject" value="Reject">
-                                            </form>
-                                        </c:if>
-                                        <c:if test="${request.status != 'Pending'}">
-                                            -
-                                        </c:if>
-                                    </td>
-                                    <td><button class="details-btn">Details</button></td>
+                            <c:forEach var="row" items="${agendaMatrix}">
+                                <tr>
+                                    <td class="name-cell">${row.name}</td>
+                                    <c:forEach var="cell" items="${row.cells}">
+                                        <td class="cell-${cell.status}"></td>
+                                    </c:forEach>
                                 </tr>
                             </c:forEach>
                         </table>
                     </div>
+                    <c:if test="${empty agendaMatrix}">
+                        <div style="text-align:center;color:#f44336;margin-top:24px;">No data for the selected period.</div>
+                    </c:if>
                 </div>
             </div>
             <div class="right-panel">
@@ -416,20 +346,5 @@
             </div>
         </div>
         <div class="footer"></div>
-        <div id="myModal" class="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:1000;">
-            <div class="modal-content" style="background:#222c3a;padding:2rem;border-radius:15px;width:90%;max-width:550px;text-align:left;box-shadow:0 10px 30px rgba(0,0,0,0.2);color:#fff;">
-                <button class="close-btn" style="background:#dc3545;color:#fff;border:none;padding:0.3rem 0.7rem;border-radius:20px;cursor:pointer;float:right;">Close</button>
-                <h3>Leave Request Details</h3>
-                <table class="modal-table" style="width:100%;border-collapse:collapse;margin-top:1rem;">
-                    <tr><th>Request ID</th><td id="modal-request-id"></td></tr>
-                    <tr><th>Start Date</th><td id="modal-start-date"></td></tr>
-                    <tr><th>End Date</th><td id="modal-end-date"></td></tr>
-                    <tr><th>Reason</th><td id="modal-reason"></td></tr>
-                    <tr><th>Status</th><td id="modal-status"></td></tr>
-                    <tr><th>Created By</th><td id="modal-created-by"></td></tr>
-                    <tr><th>Processed By</th><td id="modal-processed-by"></td></tr>
-                </table>
-            </div>
-        </div>
     </body>
-</html>
+</html> 

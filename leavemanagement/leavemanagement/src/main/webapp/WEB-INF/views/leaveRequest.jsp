@@ -293,7 +293,12 @@
     <a href="dashboard" class="tab-btn">Home</a>
     <a href="submitLeaveRequest" class="tab-btn active">Submit Leave Request</a>
     <a href="leaveHistory" class="tab-btn">Leave History</a>
-    <a href="approveLeave" class="nav-btn">Approve</a>
+    <c:if test="${user.role == 'admin' || user.role == 'Division Leader' || user.role == 'Team Leader'}">
+      <a href="approveLeave" class="nav-btn">Approve</a>
+    </c:if>
+    <c:if test="${user.role == 'Division Leader'}">
+      <a href="agenda" class="nav-btn">Agenda</a>
+    </c:if>
     <a href="profile" class="nav-btn">Profile</a>
   </div>
     <div class="main-content">
@@ -318,10 +323,12 @@
       <div style="font-weight:bold; margin-bottom:10px; color:#f7c873;">DIVISION MEMBERS</div>
       <div class="division-list">
         <c:forEach var="member" items="${sameDivisionUsers}">
-          <div class="friend online">
-            <span class="status-dot"></span>
-            ${member.fullname}
-          </div>
+          <c:if test="${member.role != 'admin'}">
+            <div class="friend online">
+              <span class="status-dot"></span>
+              ${member.fullname}
+            </div>
+          </c:if>
         </c:forEach>
         </div>
     </div>
