@@ -266,6 +266,7 @@
     </div>
     <div class="spacer"></div>
     <div class="user-info">
+      <button id="theme-toggle" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Chuyển đổi sáng/tối"><i id="theme-toggle-icon" class="fas fa-moon"></i></button>
       <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Settings"><i class="fas fa-cog"></i></button>
       <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="User Info"><i class="fas fa-user"></i></button>
       <span style="color:#888;margin:0 8px;">|</span>
@@ -314,5 +315,30 @@
     </div>
   </div>
   <div class="footer"></div>
+  <script>
+    // Theme toggle logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-toggle-icon');
+    function setTheme(dark) {
+      if (dark) {
+        document.body.style.background = '#181f2a';
+        document.body.classList.add('dark-mode');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      } else {
+        document.body.style.background = '';
+        document.body.classList.remove('dark-mode');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+      localStorage.setItem('darkMode', dark ? '1' : '0');
+    }
+    themeToggle.addEventListener('click', function() {
+      const isDark = !document.body.classList.contains('dark-mode');
+      setTheme(isDark);
+    });
+    // On load
+    if (localStorage.getItem('darkMode') === '1') setTheme(true);
+  </script>
 </body>
 </html> 
