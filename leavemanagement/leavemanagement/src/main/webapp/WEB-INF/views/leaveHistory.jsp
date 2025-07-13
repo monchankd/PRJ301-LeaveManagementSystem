@@ -247,6 +247,233 @@
                 margin-right: 6px;
                 background: #00ff99;
             }
+            
+            /* User profile button hover effect */
+            .user-info button:hover {
+                color: #f7c873 !important;
+                transform: scale(1.1);
+                transition: all 0.3s ease;
+            }
+            
+            /* Enhanced Modal Styles */
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(8px);
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                animation: fadeIn 0.3s ease-out;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes slideIn {
+                from { 
+                    transform: translateY(-50px) scale(0.9);
+                    opacity: 0;
+                }
+                to { 
+                    transform: translateY(0) scale(1);
+                    opacity: 1;
+                }
+            }
+            
+            .modal-content {
+                background: linear-gradient(135deg, #2a3441 0%, #1e2634 100%);
+                padding: 0;
+                border-radius: 20px;
+                width: 90%;
+                max-width: 600px;
+                text-align: left;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+                color: #fff;
+                animation: slideIn 0.4s ease-out;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                overflow: hidden;
+            }
+            
+            .modal-header {
+                background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+                padding: 24px 30px 20px 30px;
+                position: relative;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .modal-header h3 {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
+                color: #fff;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .modal-header h3 i {
+                font-size: 20px;
+                color: #f7c873;
+            }
+            
+            .close-btn {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+                border: none;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+            }
+            
+            .close-btn:hover {
+                background: rgba(220, 53, 69, 0.8);
+                transform: scale(1.1);
+            }
+            
+            .modal-body {
+                padding: 30px;
+            }
+            
+            .detail-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin-bottom: 24px;
+            }
+            
+            .detail-item {
+                background: rgba(255, 255, 255, 0.05);
+                padding: 16px 20px;
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
+            }
+            
+            .detail-item:hover {
+                background: rgba(255, 255, 255, 0.08);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            }
+            
+            .detail-label {
+                font-size: 12px;
+                color: #f7c873;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 6px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .detail-value {
+                font-size: 16px;
+                color: #fff;
+                font-weight: 500;
+                word-break: break-word;
+            }
+            
+            .detail-item.full-width {
+                grid-column: 1 / -1;
+            }
+            
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            .status-badge.pending {
+                background: linear-gradient(135deg, #ffeb3b, #ffc107);
+                color: #333;
+            }
+            
+            .status-badge.approved {
+                background: linear-gradient(135deg, #28a745, #20c997);
+                color: #fff;
+            }
+            
+            .status-badge.rejected {
+                background: linear-gradient(135deg, #dc3545, #e74c3c);
+                color: #fff;
+            }
+            
+            .modal-footer {
+                padding: 20px 30px 30px 30px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                display: flex;
+                justify-content: flex-end;
+                gap: 12px;
+            }
+            
+            .modal-btn {
+                padding: 12px 24px;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 14px;
+            }
+            
+            .modal-btn.primary {
+                background: linear-gradient(135deg, #4a90e2, #357abd);
+                color: #fff;
+            }
+            
+            .modal-btn.primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+            }
+            
+            .modal-btn.secondary {
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            
+            .modal-btn.secondary:hover {
+                background: rgba(255, 255, 255, 0.15);
+                transform: translateY(-2px);
+            }
+            
+            @media (max-width: 768px) {
+                .detail-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .modal-content {
+                    width: 95%;
+                    margin: 20px;
+                }
+                
+                .modal-header, .modal-body, .modal-footer {
+                    padding: 20px;
+                }
+            }
             @media (max-width: 768px) {
                 .main-content {
                     flex-direction: column;
@@ -290,28 +517,105 @@
                 const detailsButtons = document.querySelectorAll('.details-btn');
                 const modal = document.getElementById('myModal');
                 const closeBtn = document.querySelector('.close-btn');
+                
                 detailsButtons.forEach(button => {
                     button.addEventListener('click', function () {
                         const row = this.closest('tr');
+                        const status = row.querySelector('.status').textContent;
+                        
+                        // Populate modal data
                         document.getElementById('modal-start-date').textContent = row.querySelector('.start-date').textContent;
                         document.getElementById('modal-end-date').textContent = row.querySelector('.end-date').textContent;
                         document.getElementById('modal-request-id').textContent = row.getAttribute('data-request-id');
-                        document.getElementById('modal-reason').textContent = row.getAttribute('data-reason');
-                        document.getElementById('modal-status').textContent = row.querySelector('.status').textContent;
+                        document.getElementById('modal-reason').textContent = row.getAttribute('data-reason') || 'No reason provided';
                         document.getElementById('modal-created-by').textContent = row.querySelector('.created-by').textContent;
-                        document.getElementById('modal-processed-by').textContent = row.querySelector('.processed-by').textContent;
+                        document.getElementById('modal-processed-by').textContent = row.querySelector('.processed-by').textContent || 'Not processed yet';
+                        
+                        // Set status badge with appropriate styling
+                        const statusBadge = document.getElementById('modal-status-badge');
+                        statusBadge.textContent = status;
+                        statusBadge.className = 'status-badge';
+                        
+                        if (status === 'Pending') {
+                            statusBadge.classList.add('pending');
+                        } else if (status === 'Approved') {
+                            statusBadge.classList.add('approved');
+                        } else if (status === 'Rejected') {
+                            statusBadge.classList.add('rejected');
+                        }
+                        
+                        // Show modal with animation
                         modal.style.display = 'flex';
+                        setTimeout(() => {
+                            modal.querySelector('.modal-content').style.transform = 'translateY(0) scale(1)';
+                        }, 10);
                     });
                 });
-                closeBtn.addEventListener('click', function () {
-                    modal.style.display = 'none';
-                });
+                
+                closeBtn.addEventListener('click', closeModal);
+                
                 window.addEventListener('click', function (event) {
                     if (event.target === modal) {
-                        modal.style.display = 'none';
+                        closeModal();
+                    }
+                });
+                
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && modal.style.display === 'flex') {
+                        closeModal();
                     }
                 });
             });
+            
+            function closeModal() {
+                const modal = document.getElementById('myModal');
+                const modalContent = modal.querySelector('.modal-content');
+                modalContent.style.transform = 'translateY(-50px) scale(0.9)';
+                modalContent.style.opacity = '0';
+                
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    modalContent.style.transform = '';
+                    modalContent.style.opacity = '';
+                }, 300);
+            }
+            
+            function printDetails() {
+                const printWindow = window.open('', '_blank');
+                const modalContent = document.querySelector('.modal-content').cloneNode(true);
+                
+                // Remove buttons from print version
+                const footer = modalContent.querySelector('.modal-footer');
+                if (footer) footer.remove();
+                
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Leave Request Details</title>
+                            <style>
+                                body { font-family: Arial, sans-serif; margin: 20px; }
+                                .modal-content { background: white; padding: 20px; border-radius: 10px; }
+                                .modal-header { background: #4a90e2; color: white; padding: 15px; border-radius: 10px 10px 0 0; margin: -20px -20px 20px -20px; }
+                                .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+                                .detail-item { border: 1px solid #ddd; padding: 10px; border-radius: 5px; }
+                                .detail-label { font-weight: bold; color: #666; font-size: 12px; text-transform: uppercase; }
+                                .detail-value { margin-top: 5px; }
+                                .status-badge { padding: 5px 10px; border-radius: 15px; font-weight: bold; }
+                                .status-badge.pending { background: #ffeb3b; color: #333; }
+                                .status-badge.approved { background: #28a745; color: white; }
+                                .status-badge.rejected { background: #dc3545; color: white; }
+                                @media print { body { margin: 0; } }
+                            </style>
+                        </head>
+                        <body>
+                            ${modalContent.outerHTML}
+                        </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+            }
         </script>
     </head>
     <body style="margin:0;">
@@ -330,7 +634,7 @@
             <div class="user-info">
                 <button id="theme-toggle" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Chuyển đổi sáng/tối"><i id="theme-toggle-icon" class="fas fa-moon"></i></button>
                 <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Settings"><i class="fas fa-cog"></i></button>
-                <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="User Info"><i class="fas fa-user"></i></button>
+                <button onclick="window.location.href='profile'" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="User Profile"><i class="fas fa-user"></i></button>
                 <span style="color:#888;margin:0 8px;">|</span>
                 <span style="color:#f7c873;">${user.username}</span>
                 <div class="avatar">${user.username.substring(0,1)}</div>
@@ -435,19 +739,75 @@
             </div>
         </div>
         <div class="footer"></div>
-        <div id="myModal" class="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:1000;">
-            <div class="modal-content" style="background:#222c3a;padding:2rem;border-radius:15px;width:90%;max-width:550px;text-align:left;box-shadow:0 10px 30px rgba(0,0,0,0.2);color:#fff;">
-                <button class="close-btn" style="background:#dc3545;color:#fff;border:none;padding:0.3rem 0.7rem;border-radius:20px;cursor:pointer;float:right;">Close</button>
-                <h3>Leave Request Details</h3>
-                <table class="modal-table" style="width:100%;border-collapse:collapse;margin-top:1rem;">
-                    <tr><th>Request ID</th><td id="modal-request-id"></td></tr>
-                    <tr><th>Start Date</th><td id="modal-start-date"></td></tr>
-                    <tr><th>End Date</th><td id="modal-end-date"></td></tr>
-                    <tr><th>Reason</th><td id="modal-reason"></td></tr>
-                    <tr><th>Status</th><td id="modal-status"></td></tr>
-                    <tr><th>Created By</th><td id="modal-created-by"></td></tr>
-                    <tr><th>Processed By</th><td id="modal-processed-by"></td></tr>
-                </table>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-alt"></i> Leave Request Details</h3>
+                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-hashtag"></i>
+                                Request ID
+                            </div>
+                            <div class="detail-value" id="modal-request-id"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-calendar-check"></i>
+                                Start Date
+                            </div>
+                            <div class="detail-value" id="modal-start-date"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-calendar-times"></i>
+                                End Date
+                            </div>
+                            <div class="detail-value" id="modal-end-date"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-info-circle"></i>
+                                Status
+                            </div>
+                            <div class="detail-value">
+                                <span class="status-badge" id="modal-status-badge"></span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-user-plus"></i>
+                                Created By
+                            </div>
+                            <div class="detail-value" id="modal-created-by"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-user-check"></i>
+                                Processed By
+                            </div>
+                            <div class="detail-value" id="modal-processed-by"></div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <div class="detail-label">
+                                <i class="fas fa-comment-alt"></i>
+                                Reason
+                            </div>
+                            <div class="detail-value" id="modal-reason"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn secondary" onclick="closeModal()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button class="modal-btn primary" onclick="printDetails()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
             </div>
         </div>
         <script>
@@ -476,4 +836,5 @@
             if (localStorage.getItem('darkMode') === '1') setTheme(true);
         </script>
     </body>
+</html>
 </html>

@@ -240,6 +240,13 @@
                 margin-right: 6px;
                 background: #00ff99;
             }
+            
+            /* User profile button hover effect */
+            .user-info button:hover {
+                color: #f7c873 !important;
+                transform: scale(1.1);
+                transition: all 0.3s ease;
+            }
             .footer {
                 position: fixed;
                 bottom: 0;
@@ -284,7 +291,7 @@
             <div class="user-info">
                 <button id="theme-toggle" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Chuyển đổi sáng/tối"><i id="theme-toggle-icon" class="fas fa-moon"></i></button>
                 <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Settings"><i class="fas fa-cog"></i></button>
-                <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="User Info"><i class="fas fa-user"></i></button>
+                <button onclick="window.location.href='profile'" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="User Profile"><i class="fas fa-user"></i></button>
                 <span style="color:#888;margin:0 8px;">|</span>
                 <span style="color:#f7c873;">${user.username}</span>
                 <div class="avatar">${user.username.substring(0,1)}</div>
