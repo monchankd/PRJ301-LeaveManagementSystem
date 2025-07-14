@@ -119,6 +119,10 @@ public class LoginController {
             modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
         }
 
+        if ("admin".equals(user.getRole())) {
+            modelAndView.setViewName("dashboard");
+            return modelAndView;
+        }
         modelAndView.setViewName("dashboard");
         return modelAndView;
     }
@@ -142,6 +146,10 @@ public class LoginController {
             modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
         }
 
+        if ("admin".equals(user.getRole())) {
+            modelAndView.setViewName("redirect:/dashboard?denied=true");
+            return modelAndView;
+        }
         modelAndView.setViewName("leaveRequest");
         return modelAndView;
     }
@@ -202,7 +210,8 @@ public class LoginController {
     @GetMapping("/leaveHistory")
     public ModelAndView showLeaveHistory(HttpSession session,
                                          @RequestParam(value = "personalPage", defaultValue = "1") int personalPage,
-                                         @RequestParam(value = "subordinatePage", defaultValue = "1") int subordinatePage) {
+                                         @RequestParam(value = "subordinatePage", defaultValue = "1") int subordinatePage,
+                                         @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) {
         ModelAndView modelAndView = new ModelAndView();
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -210,14 +219,13 @@ public class LoginController {
             return modelAndView;
         }
 
-        int pageSize = 10;
         // Personal requests pagination
         Pageable personalPageable = PageRequest.of(personalPage - 1, pageSize);
         Page<LeaveRequest> personalRequestPage = leaveRequestRepository.findByUser_UserId(user.getUserId(), personalPageable);
         List<LeaveRequest> personalRequests = personalRequestPage.getContent();
         int personalTotalPages = personalRequestPage.getTotalPages();
 
-        // Subordinate requests pagination (tối ưu N+1 query)
+        // Subordinate requests pagination (phân trang SQL)
         List<Integer> subordinateUserIds = new ArrayList<>();
         if ("Division Leader".equals(user.getRole())) {
             List<User> divisionUsers = userRepository.findAll();
@@ -232,16 +240,15 @@ public class LoginController {
                 subordinateUserIds.add(subordinate.getUserId());
             }
         }
-        List<LeaveRequest> allSubordinateRequests = new ArrayList<>();
+        Page<LeaveRequest> subordinateRequestPage = Page.empty();
+        List<LeaveRequest> subordinateRequests = new ArrayList<>();
+        int subordinateTotalPages = 0;
         if (!subordinateUserIds.isEmpty()) {
-            allSubordinateRequests = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds);
+            Pageable subordinatePageable = PageRequest.of(subordinatePage - 1, pageSize);
+            subordinateRequestPage = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds, subordinatePageable);
+            subordinateRequests = subordinateRequestPage.getContent();
+            subordinateTotalPages = subordinateRequestPage.getTotalPages();
         }
-        // Manual pagination for subordinate requests
-        int subordinateTotal = allSubordinateRequests.size();
-        int subordinateTotalPages = (int) Math.ceil((double) subordinateTotal / pageSize);
-        int fromIndex = Math.min((subordinatePage - 1) * pageSize, subordinateTotal);
-        int toIndex = Math.min(fromIndex + pageSize, subordinateTotal);
-        List<LeaveRequest> subordinateRequests = allSubordinateRequests.subList(fromIndex, toIndex);
 
         // Thêm fullname cho createdBy và processedBy
         for (LeaveRequest request : personalRequests) {
@@ -259,10 +266,15 @@ public class LoginController {
         modelAndView.addObject("subordinateRequests", subordinateRequests);
         modelAndView.addObject("subordinatePage", subordinatePage);
         modelAndView.addObject("subordinateTotalPages", subordinateTotalPages);
+        modelAndView.addObject("pageSize", pageSize);
         if ("admin".equals(user.getRole())) {
             modelAndView.addObject("sameDivisionUsers", userRepository.findAll());
         } else {
             modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+        }
+        if ("admin".equals(user.getRole())) {
+            modelAndView.setViewName("redirect:/dashboard?denied=true");
+            return modelAndView;
         }
         modelAndView.setViewName("leaveHistory");
         return modelAndView;
@@ -276,19 +288,30 @@ public class LoginController {
     }
 
     @GetMapping("/approveLeave")
-    public ModelAndView showApproveLeave(HttpSession session) {
+    public ModelAndView showApproveLeave(HttpSession session,
+                                         @RequestParam(value = "page", defaultValue = "1") int page,
+                                         @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) {
         ModelAndView modelAndView = new ModelAndView();
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            modelAndView.setViewName("redirect:/dashboard");
+            modelAndView.setViewName("redirect:/dashboard?denied=true");
             return modelAndView;
         }
 
+        // 1. showApproveLeave: Nếu không phải Division Leader hoặc Team Leader thì redirect:/dashboard?denied=true
+        if (!"Division Leader".equals(user.getRole()) && !"Team Leader".equals(user.getRole())) {
+            modelAndView.setViewName("redirect:/dashboard?denied=true");
+            return modelAndView;
+        }
+
+        Page<LeaveRequest> leaveRequestPage = Page.empty();
         List<LeaveRequest> leaveRequests = new ArrayList<>();
+        int totalPages = 0;
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
         if ("admin".equals(user.getRole())) {
-            leaveRequests = leaveRequestRepository.findAll(); // Admin sees all
+            leaveRequestPage = leaveRequestRepository.findAll(pageable);
         } else if ("Division Leader".equals(user.getRole())) {
-            List<User> divisionUsers = userRepository.findAll(); // Get all users in division
+            List<User> divisionUsers = userRepository.findAll();
             List<Integer> subordinateUserIds = new ArrayList<>();
             for (User u : divisionUsers) {
                 if (u.getDivision() != null && u.getDivision().equals(user.getDivision()) && !"admin".equals(u.getRole())) {
@@ -296,7 +319,7 @@ public class LoginController {
                 }
             }
             if (!subordinateUserIds.isEmpty()) {
-                leaveRequests = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds);
+                leaveRequestPage = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds, pageable);
             }
         } else if ("Team Leader".equals(user.getRole())) {
             List<User> subordinates = userRepository.findByManagerId(user.getUserId());
@@ -305,18 +328,27 @@ public class LoginController {
                 subordinateUserIds.add(subordinate.getUserId());
             }
             if (!subordinateUserIds.isEmpty()) {
-                leaveRequests = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds);
+                leaveRequestPage = leaveRequestRepository.findByUser_UserIdIn(subordinateUserIds, pageable);
             }
         } else {
-            modelAndView.setViewName("redirect:/dashboard");
+            modelAndView.setViewName("redirect:/dashboard?denied=true");
             return modelAndView;
         }
+        leaveRequests = leaveRequestPage.getContent();
+        totalPages = leaveRequestPage.getTotalPages();
 
         modelAndView.addObject("leaveRequests", leaveRequests);
+        modelAndView.addObject("page", page);
+        modelAndView.addObject("totalPages", totalPages);
+        modelAndView.addObject("pageSize", pageSize);
         if ("admin".equals(user.getRole())) {
             modelAndView.addObject("sameDivisionUsers", userRepository.findAll());
         } else {
             modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+        }
+        if ("admin".equals(user.getRole())) {
+            modelAndView.setViewName("redirect:/dashboard?denied=true");
+            return modelAndView;
         }
         modelAndView.setViewName("approveLeave");
         return modelAndView;
@@ -329,7 +361,13 @@ public class LoginController {
         ModelAndView modelAndView = new ModelAndView();
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            modelAndView.setViewName("redirect:/dashboard");
+            modelAndView.setViewName("redirect:/dashboard?denied=true");
+            return modelAndView;
+        }
+
+        // 2. processApproveLeave: Nếu không phải Division Leader hoặc Team Leader thì redirect:/dashboard?denied=true
+        if (!"Division Leader".equals(user.getRole()) && !"Team Leader".equals(user.getRole())) {
+            modelAndView.setViewName("redirect:/dashboard?denied=true");
             return modelAndView;
         }
 
@@ -364,7 +402,8 @@ public class LoginController {
     public String showRegisterPage(HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null || !"admin".equals(user.getRole())) {
-            return "redirect:/dashboard";
+            // 3. showRegisterPage, register: Nếu không phải admin thì redirect:/dashboard?denied=true
+            return "redirect:/dashboard?denied=true";
         }
         return "register";
     }
@@ -376,7 +415,8 @@ public class LoginController {
         ModelAndView modelAndView = new ModelAndView();
         User user = (User) session.getAttribute("user");
         if (user == null || !"admin".equals(user.getRole())) {
-            modelAndView.setViewName("redirect:/dashboard");
+            // 3. showRegisterPage, register: Nếu không phải admin thì redirect:/dashboard?denied=true
+            modelAndView.setViewName("redirect:/dashboard?denied=true");
             return modelAndView;
         }
 
@@ -415,9 +455,8 @@ public class LoginController {
         }
         modelAndView.addObject("user", user);
         if ("admin".equals(user.getRole())) {
-            modelAndView.addObject("sameDivisionUsers", userRepository.findAll());
-        } else {
-            modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+            modelAndView.setViewName("profile");
+            return modelAndView;
         }
         modelAndView.setViewName("profile");
         return modelAndView;
@@ -429,7 +468,8 @@ public class LoginController {
                             Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null || !"Division Leader".equals(user.getRole())) {
-            return "redirect:/login";
+            // 4. agendaPage: Nếu không phải Division Leader thì redirect:/dashboard?denied=true
+            return "redirect:/dashboard?denied=true";
         }
         List<String> dateHeaders = new ArrayList<>();
         List<Map<String, Object>> agendaMatrix = new ArrayList<>();
@@ -467,6 +507,33 @@ public class LoginController {
         model.addAttribute("agendaMatrix", agendaMatrix);
         model.addAttribute("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
         return "agenda";
+    }
+
+    @PostMapping("/changePassword")
+    public ModelAndView changePassword(@RequestParam("oldPassword") String oldPassword,
+                                       @RequestParam("newPassword") String newPassword,
+                                       HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            modelAndView.setViewName("redirect:/login");
+            return modelAndView;
+        }
+        // Kiểm tra mật khẩu cũ
+        if (!user.getPasswordHash().equals(oldPassword)) { // Nếu có mã hóa, cần giải mã
+            modelAndView.addObject("changePasswordError", "Mật khẩu cũ không đúng!");
+            modelAndView.addObject("user", user);
+            modelAndView.setViewName("dashboard");
+            return modelAndView;
+        }
+        // Đổi mật khẩu
+        user.setPasswordHash(newPassword); // Nếu có mã hóa, cần mã hóa newPassword
+        userRepository.save(user);
+        session.setAttribute("user", user); // Cập nhật lại session
+        modelAndView.addObject("changePasswordSuccess", "Đổi mật khẩu thành công!");
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("dashboard");
+        return modelAndView;
     }
 }
 

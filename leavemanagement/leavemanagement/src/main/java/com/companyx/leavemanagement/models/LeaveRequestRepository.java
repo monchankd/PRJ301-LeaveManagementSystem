@@ -22,4 +22,5 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Inte
     // Pagination support
     Page<LeaveRequest> findByUser_UserId(Integer userId, Pageable pageable);
     Page<LeaveRequest> findAll(Pageable pageable);
+    Page<LeaveRequest> findByUser_UserIdIn(List<Integer> userIds, Pageable pageable);
 }

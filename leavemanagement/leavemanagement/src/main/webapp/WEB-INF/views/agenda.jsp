@@ -289,8 +289,13 @@
             </div>
             <div class="spacer"></div>
             <div class="user-info">
-                <button id="theme-toggle" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Chuyển đổi sáng/tối"><i id="theme-toggle-icon" class="fas fa-moon"></i></button>
-                <button style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Settings"><i class="fas fa-cog"></i></button>
+                <button id="theme-toggle" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="Toggle light/dark"><i id="theme-toggle-icon" class="fas fa-moon"></i></button>
+                <button id="settings-btn" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;position:relative;" title="Settings"><i class="fas fa-cog"></i></button>
+                <div id="settings-dropdown" style="display:none;position:absolute;top:36px;right:0;z-index:10001;background:#222c3a;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.18);min-width:180px;">
+                    <div id="openChangePassword" style="padding:12px 20px;color:#fff;cursor:pointer;font-size:15px;border-radius:8px 8px 0 0;transition:background 0.2s;">
+                        <i class="fas fa-key" style="margin-right:8px;"></i> Change Password
+                    </div>
+                </div>
                 <button onclick="window.location.href='profile'" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;margin-right:2px;" title="User Profile"><i class="fas fa-user"></i></button>
                 <span style="color:#888;margin:0 8px;">|</span>
                 <span style="color:#f7c873;">${user.username}</span>
@@ -299,11 +304,18 @@
         </div>
         <div class="submenu">
             <a href="dashboard" class="tab-btn">Home</a>
-            <a href="submitLeaveRequest" class="tab-btn">Submit Leave Request</a>
-            <a href="leaveHistory" class="tab-btn">Leave History</a>
-            <a href="approveLeave" class="nav-btn">Approve</a>
+            <c:if test="${user.role != 'admin'}">
+                <a href="submitLeaveRequest" class="tab-btn">Submit Leave Request</a>
+                <a href="leaveHistory" class="tab-btn">Leave History</a>
+            </c:if>
+            <c:if test="${user.role == 'Division Leader' || user.role == 'Team Leader'}">
+                <a href="approveLeave" class="nav-btn">Approve</a>
+            </c:if>
             <c:if test="${user.role == 'Division Leader'}">
                 <a href="agenda" class="nav-btn active">Agenda</a>
+            </c:if>
+            <c:if test="${user.role == 'admin'}">
+                <a href="register" class="nav-btn">Register User</a>
             </c:if>
             <a href="profile" class="nav-btn">Profile</a>
         </div>
@@ -354,6 +366,37 @@
             </div>
         </div>
         <div class="footer"></div>
+        <!-- Modal thông báo không có quyền truy cập -->
+        <div id="accessDeniedModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+          <div class="modal-content" style="background:#fff;color:#222c3a;padding:32px 40px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.25);min-width:320px;text-align:center;animation:modalFadeIn 0.3s;">
+            <h2 style="color:#f44336;margin-bottom:16px;"><i class="fas fa-ban"></i> Truy cập bị từ chối</h2>
+            <p>Bạn không có quyền truy cập trang này.</p>
+            <button onclick="closeDeniedModal()" style="margin-top:18px;padding:8px 24px;background:#f44336;color:#fff;border:none;border-radius:6px;font-size:16px;cursor:pointer;">Đóng</button>
+          </div>
+        </div>
+        <!-- Change Password Modal (English, modern style) -->
+        <div id="changePasswordModal" class="modal" style="display:none;position:fixed;z-index:10000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+            <div class="modal-content" style="background:#fff;color:#222c3a;padding:36px 36px 28px 36px;border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,0.25);min-width:340px;max-width:95vw;text-align:center;animation:modalFadeIn 0.3s;position:relative;">
+                <button onclick="closeChangePasswordModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;color:#888;cursor:pointer;"><i class="fas fa-times"></i></button>
+                <h2 style="color:#4a90e2;margin-bottom:18px;font-weight:700;font-size:1.6em;"><i class="fas fa-key"></i> Change Password</h2>
+                <form id="changePasswordForm" method="post" action="changePassword" style="display:flex;flex-direction:column;gap:18px;align-items:stretch;">
+                    <div style="text-align:left;">
+                        <label for="oldPassword" style="font-weight:500;">Current Password</label><br>
+                        <input type="password" id="oldPassword" name="oldPassword" required style="width:100%;padding:10px 12px;margin-top:6px;border-radius:8px;border:1.5px solid #d1d5db;font-size:15px;background:#f7f8fa;">
+                    </div>
+                    <div style="text-align:left;">
+                        <label for="newPassword" style="font-weight:500;">New Password</label><br>
+                        <input type="password" id="newPassword" name="newPassword" required style="width:100%;padding:10px 12px;margin-top:6px;border-radius:8px;border:1.5px solid #d1d5db;font-size:15px;background:#f7f8fa;">
+                    </div>
+                    <div style="text-align:left;">
+                        <label for="confirmPassword" style="font-weight:500;">Confirm New Password</label><br>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required style="width:100%;padding:10px 12px;margin-top:6px;border-radius:8px;border:1.5px solid #d1d5db;font-size:15px;background:#f7f8fa;">
+                    </div>
+                    <div id="changePasswordError" style="color:#f44336;margin-bottom:0;display:none;text-align:left;"></div>
+                    <button type="submit" style="padding:12px 0;background:linear-gradient(90deg,#4a90e2 60%,#f7c873 100%);color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;font-weight:600;box-shadow:0 2px 8px 0 rgba(74,144,226,0.08);margin-top:8px;">Change Password</button>
+                </form>
+            </div>
+        </div>
         <script>
             // Theme toggle logic
             const themeToggle = document.getElementById('theme-toggle');
@@ -379,5 +422,66 @@
             // On load
             if (localStorage.getItem('darkMode') === '1') setTheme(true);
         </script>
+        <script>
+function closeDeniedModal() {
+  document.getElementById('accessDeniedModal').style.display = 'none';
+}
+window.onload = function() {
+  if ('${param.denied}' === 'true') {
+    document.getElementById('accessDeniedModal').style.display = 'flex';
+  }
+}
+        </script>
+        <script>
+            function closeChangePasswordModal() {
+                var changePasswordModal = document.getElementById('changePasswordModal');
+                var changePasswordForm = document.getElementById('changePasswordForm');
+                var changePasswordError = document.getElementById('changePasswordError');
+                changePasswordModal.style.display = 'none';
+                if (changePasswordForm) changePasswordForm.reset();
+                if (changePasswordError) changePasswordError.style.display = 'none';
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                // Dropdown logic for settings
+                const settingsBtn = document.getElementById('settings-btn');
+                const settingsDropdown = document.getElementById('settings-dropdown');
+                const openChangePassword = document.getElementById('openChangePassword');
+                document.body.addEventListener('click', function(e) {
+                    if (settingsDropdown.style.display === 'block' && !settingsBtn.contains(e.target) && !settingsDropdown.contains(e.target)) {
+                        settingsDropdown.style.display = 'none';
+                    }
+                });
+                settingsBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    settingsDropdown.style.display = settingsDropdown.style.display === 'block' ? 'none' : 'block';
+                };
+                openChangePassword.onclick = function(e) {
+                    e.stopPropagation();
+                    settingsDropdown.style.display = 'none';
+                    document.getElementById('changePasswordModal').style.display = 'flex';
+                };
+                // Modal logic
+                const changePasswordForm = document.getElementById('changePasswordForm');
+                const changePasswordError = document.getElementById('changePasswordError');
+                changePasswordForm.onsubmit = function(e) {
+                    var newPass = document.getElementById('newPassword').value;
+                    var confirmPass = document.getElementById('confirmPassword').value;
+                    if (newPass !== confirmPass) {
+                        changePasswordError.innerText = 'Password confirmation does not match!';
+                        changePasswordError.style.display = 'block';
+                        e.preventDefault();
+                        return false;
+                    }
+                    changePasswordError.style.display = 'none';
+                    return true;
+                };
+            });
+        </script>
+<style>
+@keyframes modalFadeIn { from { opacity:0; transform:scale(0.95);} to { opacity:1; transform:scale(1);} }
+.modal { display:none; }
+.modal[style*="display: flex"] { display: flex !important; }
+#settings-dropdown div:hover { background: #34405a; }
+</style>
     </body>
 </html> 
