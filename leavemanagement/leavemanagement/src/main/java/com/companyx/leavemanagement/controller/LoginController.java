@@ -454,9 +454,8 @@ public class LoginController {
             return modelAndView;
         }
         modelAndView.addObject("user", user);
-        if ("admin".equals(user.getRole())) {
-            modelAndView.setViewName("profile");
-            return modelAndView;
+        if (!"admin".equals(user.getRole())) {
+            modelAndView.addObject("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
         }
         modelAndView.setViewName("profile");
         return modelAndView;

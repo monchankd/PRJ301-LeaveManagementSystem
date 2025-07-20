@@ -399,11 +399,22 @@
         <div style="background:#f44336;color:#fff;padding:12px 24px;border-radius:8px;margin-bottom:18px;">${changePasswordError}</div>
       </c:if>
       <div id="lichtrinh" class="tab-content">
-        <div class="web-info-card" style="background:#222c3a;border-radius:10px;padding:32px 24px;width:400px;color:#fff;box-shadow:0 4px 24px rgba(0,0,0,0.2);margin:0 auto;text-align:center;">
-          <h2 style="color:#f7c873;margin-bottom:18px;">Welcome to Leave Management System</h2>
-          <p style="font-size:17px;line-height:1.6;">This web application helps you manage leave requests, approvals, and history for your organization.<br><br>Use the menu above to submit a leave request, view your leave history, approve requests (if you are a manager), and manage your profile.<br><br>For any questions, please contact your HR department.</p>
-                </div>
-            </div>
+        <div class="web-info-card" style="background: linear-gradient(135deg, #232b3a 60%, #4a90e2 100%); border-radius:18px; padding:40px 32px; width:420px; color:#fff; box-shadow:0 8px 32px rgba(74,144,226,0.18); margin:0 auto 24px auto; text-align:center; border: 2.5px solid #f7c873; position:relative; overflow:hidden;">
+          <div style="position:absolute;top:-32px;right:-32px;opacity:0.12;font-size:120px;pointer-events:none;"><i class="fas fa-calendar-check"></i></div>
+          <div style="font-size:48px;margin-bottom:12px;color:#f7c873;"><i class="fas fa-user-cog"></i></div>
+          <h2 style="color:#f7c873;margin-bottom:18px;font-size:2.1rem;font-weight:800;letter-spacing:1px;text-shadow:0 2px 8px #0002;">Welcome to Leave Management System</h2>
+          <p style="font-size:18px;line-height:1.7;margin-bottom:18px;">This web application helps you manage leave requests, approvals, and history for your organization.</p>
+          <ul style="text-align:left;display:inline-block;margin:0 auto 18px auto;padding:0 0 0 18px;font-size:16px;line-height:1.7;color:#fff;">
+            <li>Submit and track your leave requests easily</li>
+            <li>View your leave history and status</li>
+            <li>Managers can approve or reject requests</li>
+            <li>Update your personal profile anytime</li>
+          </ul>
+          <div style="margin-top:18px;font-size:15px;color:#ffd580;background:rgba(0,0,0,0.08);padding:10px 18px;border-radius:8px;display:inline-block;">
+            <i class="fas fa-info-circle"></i> For any questions, please contact your HR department.
+          </div>
+        </div>
+      </div>
       <div id="lichsu" class="tab-content" style="display:none;">
         <div class="history-card" style="background:#222c3a;border-radius:10px;padding:24px 12px;width:100%;color:#fff;box-shadow:0 4px 24px rgba(0,0,0,0.2);margin:0 auto;">
           <h2 style="text-align:center;color:#f7c873;margin-bottom:18px;">Leave Request History</h2>
