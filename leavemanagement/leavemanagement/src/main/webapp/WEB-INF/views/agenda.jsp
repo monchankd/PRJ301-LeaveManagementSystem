@@ -324,10 +324,13 @@
                 <div class="agenda-card">
                     <h2>Division Agenda Overview</h2>
                     <form class="filter-row" method="get" action="agenda">
-                        <label>From: <input type="date" name="fromDate" value="${param.fromDate}" required></label>
-                        <label>To: <input type="date" name="toDate" value="${param.toDate}" required></label>
+                        <label>From: <input type="date" name="fromDate" value="${fromDate}" required></label>
+                        <label>To: <input type="date" name="toDate" value="${toDate}" required></label>
                         <button type="submit">Filter</button>
                     </form>
+                    <div style="text-align:center;color:#f7c873;font-size:16px;margin-bottom:10px;">
+                        Đang xem từ <b>${fromDate}</b> đến <b>${toDate}</b>
+                    </div>
                     <div class="agenda-table-container">
                         <table class="agenda-table">
                             <tr>

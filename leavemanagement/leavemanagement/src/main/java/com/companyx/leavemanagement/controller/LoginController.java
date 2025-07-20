@@ -471,41 +471,51 @@ public class LoginController {
             // 4. agendaPage: Nếu không phải Division Leader thì redirect:/dashboard?denied=true
             return "redirect:/dashboard?denied=true";
         }
+        // Bổ sung logic mặc định cho fromDate và toDate
+        LocalDate start, end;
+        if (fromDate == null || toDate == null) {
+            start = LocalDate.now();
+            end = start.plusDays(7);
+            fromDate = start.toString();
+            toDate = end.toString();
+        } else {
+            start = LocalDate.parse(fromDate);
+            end = LocalDate.parse(toDate);
+        }
         List<String> dateHeaders = new ArrayList<>();
         List<Map<String, Object>> agendaMatrix = new ArrayList<>();
-        if (fromDate != null && toDate != null) {
-            LocalDate start = LocalDate.parse(fromDate);
-            LocalDate end = LocalDate.parse(toDate);
+        for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
+            dateHeaders.add(d.getDayOfMonth() + "/" + d.getMonthValue());
+        }
+        List<User> members = userRepository.findByDivision(user.getDivision());
+        for (User member : members) {
+            if ("admin".equals(member.getRole())) continue;
+            Map<String, Object> row = new HashMap<>();
+            row.put("name", member.getFullname());
+            List<Map<String, String>> cells = new ArrayList<>();
+            List<LeaveRequest> leaves = leaveRequestRepository.findByUser_UserId(member.getUserId());
             for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
-                dateHeaders.add(d.getDayOfMonth() + "/" + d.getMonthValue());
-            }
-            List<User> members = userRepository.findByDivision(user.getDivision());
-            for (User member : members) {
-                if ("admin".equals(member.getRole())) continue;
-                Map<String, Object> row = new HashMap<>();
-                row.put("name", member.getFullname());
-                List<Map<String, String>> cells = new ArrayList<>();
-                List<LeaveRequest> leaves = leaveRequestRepository.findByUser_UserId(member.getUserId());
-                for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
-                    boolean isLeave = false;
-                    for (LeaveRequest leave : leaves) {
-                        if (leave.getStatus().equals("Approved") &&
-                            (d.compareTo(leave.getStartDate()) >= 0 && d.compareTo(leave.getEndDate()) <= 0)) {
-                            isLeave = true;
-                            break;
-                        }
+                boolean isLeave = false;
+                for (LeaveRequest leave : leaves) {
+                    if (leave.getStatus().equals("Approved") &&
+                        (d.compareTo(leave.getStartDate()) >= 0 && d.compareTo(leave.getEndDate()) <= 0)) {
+                        isLeave = true;
+                        break;
                     }
-                    Map<String, String> cell = new HashMap<>();
-                    cell.put("status", isLeave ? "leave" : "working");
-                    cells.add(cell);
                 }
-                row.put("cells", cells);
-                agendaMatrix.add(row);
+                Map<String, String> cell = new HashMap<>();
+                cell.put("status", isLeave ? "leave" : "working");
+                cells.add(cell);
             }
+            row.put("cells", cells);
+            agendaMatrix.add(row);
         }
         model.addAttribute("dateHeaders", dateHeaders);
         model.addAttribute("agendaMatrix", agendaMatrix);
         model.addAttribute("sameDivisionUsers", userRepository.findByDivision(user.getDivision()));
+        // Truyền thêm fromDate, toDate sang view
+        model.addAttribute("fromDate", fromDate);
+        model.addAttribute("toDate", toDate);
         return "agenda";
     }
 

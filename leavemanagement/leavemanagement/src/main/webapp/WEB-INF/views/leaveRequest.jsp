@@ -191,41 +191,85 @@
         }
         .leave-form-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             margin: 0 auto;
             background: #222c3a;
-            border-radius: 10px;
-            padding: 32px 24px;
+            border-radius: 18px;
+            padding: 38px 28px 32px 28px;
             color: #fff;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+            position: relative;
+            animation: modalFadeIn 0.5s;
         }
         .leave-form-card h2 {
             text-align: center;
             color: #f7c873;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
+            letter-spacing: 1px;
+        }
+        .leave-form-group {
+            margin-bottom: 20px;
+            position: relative;
         }
         .leave-form-card label {
-            margin-bottom: 4px;
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #f7c873;
+            letter-spacing: 0.2px;
+        }
+        .leave-form-icon {
+            position: absolute;
+            left: 12px;
+            top: 60%;
+            transform: translateY(-50%);
+            color: #4a90e2;
+            font-size: 17px;
+            pointer-events: none;
         }
         .leave-form-card input[type="date"],
         .leave-form-card textarea {
+            box-sizing: border-box;
             width: 100%;
-            margin-bottom: 12px;
-            padding: 8px;
-            border: 1px solid #2e3a4d;
-            border-radius: 4px;
+            padding: 8px 12px 8px 38px;
+            border: 1.5px solid #2e3a4d;
+            border-radius: 8px;
             background: #181f2a;
             color: #fff;
+            font-size: 15px;
+            box-shadow: 0 2px 8px rgba(74,144,226,0.08);
+            transition: border 0.2s, box-shadow 0.2s;
+            height: 40px;
+        }
+        .leave-form-card input[type="date"]:focus,
+        .leave-form-card textarea:focus {
+            border: 1.5px solid #4a90e2;
+            box-shadow: 0 4px 16px 0 rgba(74,144,226,0.18);
+            outline: none;
+        }
+        .leave-form-card textarea {
+            min-height: 80px;
+            height: auto;
+            resize: vertical;
         }
         .leave-form-card button[type="submit"] {
             width: 100%;
-            background: #f7c873;
+            background: linear-gradient(90deg, #4a90e2 60%, #f7c873 100%);
             color: #222c3a;
             font-weight: bold;
-            padding: 10px 0;
+            padding: 12px 0;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 17px;
+            margin-top: 8px;
+            box-shadow: 0 2px 8px 0 rgba(247,200,115,0.08);
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+        }
+        .leave-form-card button[type="submit"]:hover {
+            background: linear-gradient(90deg, #f7c873 60%, #4a90e2 100%);
+            color: #181f2a;
+            transform: translateY(-2px) scale(1.03);
         }
         .right-panel .division-list {
             width: 100%;
@@ -326,13 +370,22 @@
         <c:if test="${not empty message}">
           <div class="message">${message}</div>
         </c:if>
-            <form action="submitLeaveRequest" method="post">
-          <label style="margin-bottom:4px;">Start Date:</label>
-          <input type="date" name="startDate" required style="width:100%;margin-bottom:12px;">
-          <label style="margin-bottom:4px;">End Date:</label>
-          <input type="date" name="endDate" required style="width:100%;margin-bottom:12px;">
-          <label style="margin-bottom:4px;">Reason:</label>
-          <textarea name="reason" required style="width:100%;margin-bottom:16px;"></textarea>
+            <form action="submitLeaveRequest" method="post" autocomplete="off">
+          <div class="leave-form-group">
+            <label for="startDate">Start Date:</label>
+            <span class="leave-form-icon"><i class="fas fa-calendar-alt"></i></span>
+            <input type="date" id="startDate" name="startDate" required placeholder="Select start date">
+          </div>
+          <div class="leave-form-group">
+            <label for="endDate">End Date:</label>
+            <span class="leave-form-icon"><i class="fas fa-calendar-check"></i></span>
+            <input type="date" id="endDate" name="endDate" required placeholder="Select end date">
+          </div>
+          <div class="leave-form-group">
+            <label for="reason">Reason:</label>
+            <span class="leave-form-icon"><i class="fas fa-pen"></i></span>
+            <textarea id="reason" name="reason" required placeholder="Describe your reason for leave..."></textarea>
+          </div>
           <button type="submit">Submit</button>
             </form>
       </div>
